@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Status - Café NOMAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="logo"><span>N</span> Café NOMAD</div>
+        <button class="hamburger" id="hamburger">&#9776;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/cafe/">Home</a></li>
+            <li><a href="/cafe/menu.html">Menu</a></li>
+            <li><a href="/cafe/reservation.html">Reserve</a></li>
+            <li><a href="/cafe/status.html">Status</a></li>
+            <li><a href="/cafe/contact.html">Contact</a></li>
+            <li><a href="/cafe/cart.html" class="cart-link">Cart <span class="cart-badge" id="cartBadge">0</span></a></li>
+            <li><a href="/cafe/admin/login.html">Staff</a></li>
+        </ul>
+    </nav>
+
+    <section class="section form-section" style="margin-top: 80px;">
+        <h2 class="section-title reveal">Check Your Reservation</h2>
+        <p class="section-subtitle reveal">Enter your email to see your status</p>
+        
+        <div class="form-container reveal">
+            <div id="statusMsg"></div>
+            <form id="statusForm">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" name="email" placeholder="e.g., ahmed@example.com" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Check Status</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 Café NOMAD. Made with ❤️ by Ziyad.</p>
+    </footer>
+
+    <script src="/cafe/js/cart.js"></script>
+    <script src="/cafe/js/main.js"></script>
+    <script>
+        const statusForm = document.getElementById('statusForm');
+        if(statusForm) {
+            statusForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = e.target.email.value;
+                const msgDiv = document.getElementById('statusMsg');
+                msgDiv.innerHTML = '<div class="message">Checking...</div>';
+
+                try {
+                    const res = await fetch(`/cafe-api/reservations/status?email=${encodeURIComponent(email)}`);
+                    const data = await res.json();
+
+                    if (data.success && data.found) {
+                        const r = data.reservation;
+                        const statusClass = r.status === 'confirmed' ? 'success' : (r.status === 'cancelled' ? 'error' : '');
+                        msgDiv.innerHTML = `
+                            <div class="message ${statusClass}">
+                                <strong>Status: ${r.status.toUpperCase()}</strong><br>
+                                Name: ${r.name}<br>
+                                Date: ${new Date(r.date).toLocaleDateString()} at ${r.time}<br>
+                                Guests: ${r.guests}<br><br>
+                                <em>${data.capacityMsg}</em>
+                            </div>
+                        `;
+                    } else {
+                        msgDiv.innerHTML = `<div class="message error">${data.message}</div>`;
+                    }
+                } catch (err) {
+                    msgDiv.innerHTML = '<div class="message error">Server error.</div>';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

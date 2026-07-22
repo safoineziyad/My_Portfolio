@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café NOMAD - Marrakech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="logo"><span>N</span> Café NOMAD</div>
+        <button class="hamburger" id="hamburger">&#9776;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/cafe/">Home</a></li>
+            <li><a href="/cafe/menu.html">Menu</a></li>
+            <li><a href="/cafe/reservation.html">Reserve</a></li>
+            <li><a href="/cafe/status.html">Status</a></li>
+            <li><a href="/cafe/contact.html">Contact</a></li>
+            <li><a href="/cafe/admin/login.html">Staff</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Café NOMAD</h1>
+            <p>Experience the finest coffee in Marrakech. Crafted with passion, served with art.</p>
+            <a href="/cafe/reservation.html" class="btn btn-outline">Book a Table</a>
+        </div>
+    </section>
+
+    <!-- ABOUT DECOR SECTION -->
+    <section class="about-section">
+        <div class="about-container">
+            <div class="about-text reveal">
+                <h2>Our Story</h2>
+                <p>Born in the heart of the Marrakech Medina, Café NOMAD is a sanctuary for coffee lovers and travelers alike. We blend traditional Moroccan hospitality with modern coffee culture.</p>
+                <p>Our beans are ethically sourced from the Atlas Mountains and roasted in small batches every morning. Every cup tells a story of dedication, from the farmer to the roaster, straight to your hands.</p>
+                <a href="/cafe/menu.html" class="btn">Explore Menu</a>
+            </div>
+            <div class="about-image reveal">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800" alt="Cafe Interior">
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title reveal">Today's Specials</h2>
+        <p class="section-subtitle reveal">Handcrafted just for you</p>
+        <div class="menu-grid" id="specialsGrid">
+            <p class="loading-text">Loading specials...</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Cafe NOMAD. Made with &#10084;&#65039; by Ziyad.</p>
+    </footer>
+
+    <script src="/cafe/js/cart.js"></script>
+    <script src="/cafe/js/main.js"></script>
+</body>
+</html>

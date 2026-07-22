@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" fill="none">
+  <rect width="400" height="250" rx="16" fill="#0f0a1a"/>
+  <rect x="1" y="1" width="398" height="248" rx="15" stroke="#6c63ff" stroke-width="1" stroke-opacity="0.3"/>
+  <circle cx="130" cy="100" r="22" fill="#e74c3c"/>
+  <circle cx="175" cy="100" r="22" fill="#f39c12"/>
+  <circle cx="220" cy="100" r="22" fill="#2ecc71"/>
+  <circle cx="265" cy="100" r="22" fill="#3498db"/>
+  <circle cx="310" cy="100" r="22" fill="#9b59b6"/>
+  <text x="200" y="160" text-anchor="middle" font-family="monospace" font-size="16" fill="#ffffff" fill-opacity="0.8">ChromaCraft</text>
+  <text x="200" y="182" text-anchor="middle" font-family="monospace" font-size="10" fill="#ffffff" fill-opacity="0.4">COLOUR PALETTE GENERATOR</text>
+</svg>

@@ -1,0 +1,344 @@
+{
+  "menu": [
+    {
+      "id": 1,
+      "name": "Drip Coffee",
+      "description": "Freshly brewed single-origin Arabica beans from the Atlas Mountains.",
+      "price": 18,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop",
+      "isPopular": true
+    },
+    {
+      "id": 2,
+      "name": "Americano",
+      "description": "Double shot of rich espresso topped with hot water.",
+      "price": 22,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1521302080334-4bebac2763a6?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 3,
+      "name": "Latte",
+      "description": "Smooth espresso with steamed milk and a delicate layer of foam.",
+      "price": 35,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&h=300&fit=crop",
+      "isPopular": true
+    },
+    {
+      "id": 4,
+      "name": "Cappuccino",
+      "description": "Equal parts espresso, steamed milk, and milk foam.",
+      "price": 32,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 5,
+      "name": "Mocha",
+      "description": "Espresso mixed with Belgian dark chocolate and steamed milk.",
+      "price": 40,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 6,
+      "name": "Chai Latte",
+      "description": "Spiced black tea concentrate with creamy steamed milk.",
+      "price": 38,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1557006021-b85faa2bc5e2?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 7,
+      "name": "Matcha Latte",
+      "description": "Ceremonial grade Japanese matcha whisked with steamed milk.",
+      "price": 45,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 8,
+      "name": "Hot Chocolate",
+      "description": "Rich melted Belgian dark chocolate in steamed milk.",
+      "price": 35,
+      "category": "Hot Drinks",
+      "image": "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 9,
+      "name": "Iced Coffee",
+      "description": "Chilled coffee served over ice with a splash of milk.",
+      "price": 30,
+      "category": "Cold Drinks",
+      "image": "https://images.unsplash.com/photo-1460398035689-8f66be4b6027?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 10,
+      "name": "Cold Brew",
+      "description": "18-hour steeped smooth cold coffee, naturally sweet.",
+      "price": 38,
+      "category": "Cold Drinks",
+      "image": "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=300&fit=crop",
+      "isPopular": true
+    },
+    {
+      "id": 11,
+      "name": "Frappes",
+      "description": "Blended iced coffee with whipped cream and caramel drizzle.",
+      "price": 45,
+      "category": "Cold Drinks",
+      "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 12,
+      "name": "Fresh Lemonade",
+      "description": "Hand-squeezed Moroccan lemons with mint and sparkling water.",
+      "price": 28,
+      "category": "Cold Drinks",
+      "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 13,
+      "name": "Berry Smoothie",
+      "description": "Mixed berries, banana, and Greek yogurt blended to perfection.",
+      "price": 40,
+      "category": "Cold Drinks",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 14,
+      "name": "Plain Croissant",
+      "description": "Flaky, buttery French-style croissant baked fresh daily.",
+      "price": 20,
+      "category": "Pastries",
+      "image": "https://images.unsplash.com/photo-1555507036-ab1f4038024a?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 15,
+      "name": "Chocolate Croissant",
+      "description": "Buttery croissant dough filled with rich dark chocolate.",
+      "price": 25,
+      "category": "Pastries",
+      "image": "https://images.unsplash.com/photo-1530610476181-d83430b64dcd?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 16,
+      "name": "Almond Croissant",
+      "description": "Croissant filled with almond frangipane and toasted almonds.",
+      "price": 28,
+      "category": "Pastries",
+      "image": "https://images.unsplash.com/photo-1509365390695-33aee754301f?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 19,
+      "name": "Cookies",
+      "description": "Warm chocolate chip cookies baked fresh in-house.",
+      "price": 15,
+      "category": "Pastries",
+      "image": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 20,
+      "name": "Tiramisu",
+      "description": "Coffee-soaked ladyfingers layered with rich mascarpone cream.",
+      "price": 45,
+      "category": "Desserts",
+      "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 21,
+      "name": "Creme Brulee",
+      "description": "Classic vanilla bean custard with a caramelized sugar crust.",
+      "price": 50,
+      "category": "Desserts",
+      "image": "https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 22,
+      "name": "Avocado Toast",
+      "description": "Smashed avocado on sourdough with chili flakes and lime.",
+      "price": 65,
+      "category": "Savory Food",
+      "image": "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 23,
+      "name": "Breakfast Burrito",
+      "description": "Scrambled eggs, cheese, and sausage wrapped in a tortilla.",
+      "price": 75,
+      "category": "Savory Food",
+      "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 24,
+      "name": "Oatmeal",
+      "description": "Warm oats with brown sugar, bananas, and toasted almonds.",
+      "price": 40,
+      "category": "Savory Food",
+      "image": "https://images.unsplash.com/photo-1495214783159-3503fd1b572d?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 25,
+      "name": "Caprese Panini",
+      "description": "Tomato, fresh mozzarella, and basil pesto pressed flatbread.",
+      "price": 70,
+      "category": "Savory Food",
+      "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 26,
+      "name": "Chicken Caesar Wrap",
+      "description": "Grilled chicken, romaine, and caesar dressing in a wrap.",
+      "price": 65,
+      "category": "Savory Food",
+      "image": "https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 27,
+      "name": "Quinoa Salad",
+      "description": "Quinoa, cucumber, tomatoes, and feta with lemon dressing.",
+      "price": 60,
+      "category": "Savory Food",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 28,
+      "name": "Soup of the Day",
+      "description": "Ask staff for today's fresh homemade soup. Served with bread.",
+      "price": 45,
+      "category": "Savory Food",
+      "image": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 29,
+      "name": "Classic Liege Waffle",
+      "description": "Pearl-sugar caramelized waffle, served with butter and maple syrup.",
+      "price": 45,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400&h=300&fit=crop",
+      "isPopular": true
+    },
+    {
+      "id": 30,
+      "name": "Berry Bliss Waffle",
+      "description": "Golden waffle with vanilla mascarpone, strawberries, and berry compote.",
+      "price": 60,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 31,
+      "name": "Banana Brulee Waffle",
+      "description": "Caramelized bananas, candied pecans, whipped cream, salted caramel.",
+      "price": 65,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1560184897-ae75f418493e?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 33,
+      "name": "Chicken & Waffle",
+      "description": "Crispy fried chicken on a classic waffle, spicy honey & hot sauce.",
+      "price": 85,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 35,
+      "name": "Nutella & Banana Crepe",
+      "description": "Generous Nutella spread, fresh bananas, whipped cream.",
+      "price": 55,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 36,
+      "name": "Strawberry Cheesecake Crepe",
+      "description": "Cream cheese frosting, fresh strawberries, graham cracker crumble.",
+      "price": 65,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1504387828636-abeb50778c0c?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 37,
+      "name": "Apple Cinnamon Crepe",
+      "description": "Sautéed cinnamon apples, brown sugar butter, vanilla glaze.",
+      "price": 55,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 38,
+      "name": "S'mores Crepe",
+      "description": "Melted dark chocolate, toasted marshmallow fluff, crushed graham.",
+      "price": 60,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 39,
+      "name": "Ham & Swiss Crepe",
+      "description": "Black Forest ham, melted Gruyere, sunny-side-up egg.",
+      "price": 70,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 40,
+      "name": "Mushroom & Truffle Crepe",
+      "description": "Wild mushrooms, caramelized onions, spinach, truffle oil, provolone.",
+      "price": 85,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 41,
+      "name": "The Southwest Crepe",
+      "description": "Grilled chicken, cheddar, black beans, corn salsa, chipotle crema.",
+      "price": 80,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 42,
+      "name": "Mediterranean Veggie Crepe",
+      "description": "Zucchini, bell peppers, feta, kalamata olives, tzatziki.",
+      "price": 75,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 43,
+      "name": "Bacon, Egg & Cheddar Crepe",
+      "description": "Crispy bacon, scrambled eggs, sharp cheddar, Dijon mustard.",
+      "price": 70,
+      "category": "Waffles & Crepes",
+      "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=300&fit=crop"
+    },
+    {
+      "id": 45,
+      "name": "Nomad Cold Brew",
+      "description": "Our signature 18-hour cold brew with a hint of orange zest.",
+      "price": 40,
+      "category": "Cold Drinks",
+      "image": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=400&h=300&fit=crop"
+    }
+  ],
+  "reservations": [
+    {
+      "id": 1784645945657,
+      "name": "Ziyad Safoine",
+      "email": "safoineziyad@gmail.com",
+      "phone": "0652162600",
+      "date": "2026-02-22",
+      "time": "22:00",
+      "guests": 3,
+      "specialRequests": "",
+      "status": "confirmed",
+      "createdAt": "2026-07-21T14:59:05.657Z"
+    }
+  ],
+  "orders": [],
+  "contactMessages": []
+}

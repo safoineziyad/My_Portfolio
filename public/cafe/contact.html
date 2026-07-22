@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Café NOMAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="logo"><span>N</span> Café NOMAD</div>
+        <button class="hamburger" id="hamburger">&#9776;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/cafe/">Home</a></li>
+            <li><a href="/cafe/menu.html">Menu</a></li>
+            <li><a href="/cafe/reservation.html">Reserve</a></li>
+            <li><a href="/cafe/status.html">Status</a></li>
+            <li><a href="/cafe/contact.html">Contact</a></li>
+            <li><a href="/cafe/cart.html" class="cart-link">Cart <span class="cart-badge" id="cartBadge">0</span></a></li>
+            <li><a href="/cafe/admin/login.html">Staff</a></li>
+        </ul>
+    </nav>
+
+    <section class="section form-section" style="margin-top: 80px;">
+        <h2 class="section-title reveal">Get in Touch</h2>
+        <p class="section-subtitle reveal">We'd love to hear from you</p>
+        
+        <div class="form-container reveal">
+            <div id="formMessage"></div>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea class="form-control" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 Café NOMAD. Made with ❤️ by Ziyad.</p>
+    </footer>
+
+    <script src="/cafe/js/cart.js"></script>
+    <script src="/cafe/js/main.js"></script>
+</body>
+</html>

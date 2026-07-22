@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Café NOMAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body style="background: var(--espresso);">
+    <div class="login-box">
+        <h2>Staff Login</h2>
+        <div id="loginMsg"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-control" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">Login</button>
+        </form>
+    </div>
+
+    <script>
+        if (localStorage.getItem('apiKey')) {
+            window.location.href = '/cafe/admin/dashboard.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            const msgDiv = document.getElementById('loginMsg');
+            
+            try {
+                const res = await fetch('/cafe-api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (res.ok && result.success) {
+                    localStorage.setItem('apiKey', result.apiKey);
+                    window.location.href = '/cafe/admin/dashboard.html';
+                } else {
+                    msgDiv.innerHTML = `<div class="message error">${result.message}</div>`;
+                }
+            } catch (err) {
+                msgDiv.innerHTML = '<div class="message error">Network error.</div>';
+            }
+        });
+    </script>
+</body>
+</html>

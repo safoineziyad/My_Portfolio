@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Café NOMAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><span>N</span> Café NOMAD</div>
+        <button class="hamburger" id="hamburger">&#9776;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/cafe/">Home</a></li>
+            <li><a href="/cafe/menu.html">Menu</a></li>
+            <li><a href="/cafe/reservation.html">Reserve</a></li>
+            <li><a href="/cafe/status.html">Check Status</a></li>
+            <li><a href="/cafe/contact.html">Contact</a></li>
+            <li><a href="/cafe/cart.html" class="cart-link">Cart <span class="cart-badge" id="cartBadge">0</span></a></li>
+            <li><a href="/cafe/admin/login.html">Staff</a></li>
+        </ul>
+    </nav>
+
+    <section class="section form-section" style="margin-top: 80px;">
+        <h2 class="section-title">Your Cart</h2>
+        
+        <div id="cartEmpty" class="form-container" style="text-align:center;">
+            <p style="font-size:1.2rem;margin-bottom:1.5rem;">Your cart is empty.</p>
+            <a href="/cafe/menu.html" class="btn">Browse Menu</a>
+        </div>
+
+        <div id="cartContent" style="display:none; max-width:900px; margin:0 auto;">
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartItems"></tbody>
+                </table>
+            </div>
+
+            <div class="cart-summary" id="cartSummary">
+                <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal"></span></div>
+                <div class="summary-row"><span>Tax (10%)</span><span id="cartTax"></span></div>
+                <div class="summary-row summary-total"><span>Total</span><span id="cartTotal"></span></div>
+                <a href="/cafe/checkout.html" class="btn" style="width:100%;margin-top:1.5rem;">Proceed to Checkout</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Cafe NOMAD. Made with &#10084;&#65039; by Ziyad.</p>
+    </footer>
+
+    <script src="/cafe/js/cart.js"></script>
+    <script src="/cafe/js/main.js"></script>
+    <script>
+        function renderCart() {
+            const items = Cart.getItems();
+            const emptyMsg = document.getElementById('cartEmpty');
+            const content = document.getElementById('cartContent');
+            const tbody = document.getElementById('cartItems');
+
+            if (items.length === 0) {
+                emptyMsg.style.display = 'block';
+                content.style.display = 'none';
+                return;
+            }
+
+            emptyMsg.style.display = 'none';
+            content.style.display = 'block';
+
+            tbody.innerHTML = items.map(item => `
+                <tr>
+                    <td>
+                        ${item.image ? `<img src="${item.image}" style="width:50px;height:50px;border-radius:8px;object-fit:cover;margin-right:8px;vertical-align:middle;">` : ''}
+                        <strong>${item.name}</strong>
+                    </td>
+                    <td>${item.price} MAD</td>
+                    <td>
+                        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                        <span class="qty-display">${item.quantity}</span>
+                        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                    </td>
+                    <td><strong>${item.price * item.quantity} MAD</strong></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="removeItem(${item.id})">Remove</button></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('cartSubtotal').textContent = Cart.getTotal() + ' MAD';
+            document.getElementById('cartTax').textContent = Cart.getTax() + ' MAD';
+            document.getElementById('cartTotal').textContent = Cart.getGrandTotal() + ' MAD';
+        }
+
+        function changeQty(id, delta) {
+            const items = Cart.getItems();
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item.quantity = Math.max(1, item.quantity + delta);
+                Cart.save(items);
+                renderCart();
+            }
+        }
+
+        function removeItem(id) {
+            Cart.removeItem(id);
+            renderCart();
+        }
+
+        renderCart();
+    </script>
+</body>
+</html>

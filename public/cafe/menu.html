@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Café NOMAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="logo"><span>N</span> Café NOMAD</div>
+        <button class="hamburger" id="hamburger">&#9776;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/cafe/">Home</a></li>
+            <li><a href="/cafe/menu.html">Menu</a></li>
+            <li><a href="/cafe/reservation.html">Reserve</a></li>
+            <li><a href="/cafe/status.html">Status</a></li>
+            <li><a href="/cafe/contact.html">Contact</a></li>
+            <li><a href="/cafe/admin/login.html">Staff</a></li>
+        </ul>
+    </nav>
+
+    <section class="section" style="margin-top: 80px;">
+        <h2 class="section-title reveal">Our Menu</h2>
+        <p class="section-subtitle reveal">Fresh ingredients, bold flavors</p>
+        
+        <div class="filters reveal" id="filters">
+            <button class="filter-btn active" data-cat="All">All</button>
+            <button class="filter-btn" data-cat="Hot Drinks">Hot Drinks</button>
+            <button class="filter-btn" data-cat="Cold Drinks">Cold Drinks</button>
+            <button class="filter-btn" data-cat="Pastries">Pastries</button>
+            <button class="filter-btn" data-cat="Desserts">Desserts</button>
+            <button class="filter-btn" data-cat="Savory Food">Savory Food</button>
+            <button class="filter-btn" data-cat="Waffles & Crepes">Waffles & Crepes</button>
+        </div>
+
+        <div class="menu-grid" id="menuGrid">
+            <p class="loading-text">Loading menu...</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Cafe NOMAD. Made with &#10084;&#65039; by Ziyad.</p>
+    </footer>
+
+    <script src="/cafe/js/cart.js"></script>
+    <script src="/cafe/js/main.js"></script>
+    <script src="/cafe/js/menu.js"></script>
+</body>
+</html>

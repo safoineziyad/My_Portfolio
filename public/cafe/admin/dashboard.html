@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Café NOMAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <h2>Admin Panel</h2>
+            <button class="active" id="tabReservations">Reservations</button>
+            <button id="tabOrders">Orders</button>
+            <button id="tabMenu">Menu Management</button>
+            <button id="tabLogout" style="margin-top: auto; color: var(--danger); border: 1px solid var(--danger);">Logout</button>
+        </aside>
+        
+        <main class="admin-main">
+            <!-- Stats -->
+            <div class="admin-stats" id="adminStats">
+                <div class="stat-card">
+                    <div class="stat-number" id="statsOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statsReservations">0</div>
+                    <div class="stat-label">Reservations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statsMenuItems">0</div>
+                    <div class="stat-label">Menu Items</div>
+                </div>
+            </div>
+
+            <!-- Reservations Section -->
+            <div id="reservationsTab">
+                <h2 class="admin-header">Reservations</h2>
+                
+                <div class="capacity-tracker" id="capacityTracker">
+                    Loading capacity...
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Guests</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservationsBody">
+                            <tr><td colspan="6" class="loading-text">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div id="ordersTab" style="display: none;">
+                <h2 class="admin-header">Orders</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr><td colspan="6" class="loading-text">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Menu Management Section -->
+            <div id="menuTab" style="display: none;">
+                <h2 class="admin-header">Add New Menu Item</h2>
+                
+                <div class="form-container" style="max-width: 100%; margin-bottom: 2rem; padding: 2rem;">
+                    <form id="menuForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select class="form-control" name="category" required>
+                                    <option value="Hot Drinks">Hot Drinks</option>
+                                    <option value="Cold Drinks">Cold Drinks</option>
+                                    <option value="Pastries">Pastries</option>
+                                    <option value="Desserts">Desserts</option>
+                                    <option value="Savory Food">Savory Food</option>
+                                    <option value="Waffles & Crepes">Waffles & Crepes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" name="description" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Price (MAD)</label>
+                                <input type="number" class="form-control" name="price" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="url" class="form-control" name="image" placeholder="https://images.unsplash.com/...">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Add Item</button>
+                    </form>
+                </div>
+
+                <h2 class="admin-header">Current Menu</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menuBody">
+                            <tr><td colspan="4" class="loading-text">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/cafe/js/admin.js"></script>
+</body>
+</html>

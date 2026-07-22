@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Cafe NOMAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/cafe/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><span>N</span> Cafe NOMAD</div>
+        <button class="hamburger" id="hamburger">&#9776;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/cafe/">Home</a></li>
+            <li><a href="/cafe/menu.html">Menu</a></li>
+            <li><a href="/cafe/reservation.html">Reserve</a></li>
+            <li><a href="/cafe/status.html">Check Status</a></li>
+            <li><a href="/cafe/contact.html">Contact</a></li>
+            <li><a href="/cafe/cart.html" class="cart-link">Cart <span class="cart-badge" id="cartBadge">0</span></a></li>
+            <li><a href="/cafe/admin/login.html">Staff</a></li>
+        </ul>
+    </nav>
+
+    <section class="section form-section" style="margin-top: 80px;">
+        <h2 class="section-title">Checkout</h2>
+
+        <div id="checkoutForm-wrap" class="form-container">
+            <div id="checkoutMsg"></div>
+            <form id="checkoutForm">
+                <h3 style="margin-bottom:1.5rem;color:var(--terracotta);">Delivery Details</h3>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" name="customerName" id="customerName" maxlength="100" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="customerEmail" id="customerEmail" maxlength="150" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" class="form-control" name="customerPhone" id="customerPhone" maxlength="20" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <input type="text" class="form-control" name="address" id="address" placeholder="Street, city, area..." maxlength="200" required>
+                </div>
+                <div class="form-group">
+                    <label>Special Instructions</label>
+                    <textarea class="form-control" name="specialInstructions" id="specialInstructions" rows="2" maxlength="300" placeholder="Ring bell, leave at door..."></textarea>
+                </div>
+
+                <div class="cart-summary" style="max-width:100%;margin-top:2rem;">
+                    <div class="summary-row"><span>Subtotal</span><span id="checkSubtotal"></span></div>
+                    <div class="summary-row"><span>Tax (10%)</span><span id="checkTax"></span></div>
+                    <div class="summary-row summary-total"><span>Total</span><span id="checkTotal"></span></div>
+                </div>
+
+                <button type="button" id="openPaymentModal" class="btn" style="width:100%;margin-top:1.5rem;">Pay Now</button>
+            </form>
+        </div>
+
+        <div id="orderSuccess" style="display:none; max-width:650px; margin:0 auto;">
+            <div class="form-container" style="text-align:center;">
+                <div class="order-success-icon">
+                    <svg class="checkmark-svg" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+                <h2 style="color:var(--success);margin-bottom:1rem;">Order Confirmed!</h2>
+                <p style="font-size:1.1rem;margin-bottom:0.5rem;">Your order number is:</p>
+                <p id="orderNumber" style="font-size:2rem;font-weight:700;color:var(--terracotta);margin-bottom:1.5rem;"></p>
+                <p style="margin-bottom:2rem;">You can check your order status anytime using your email.</p>
+                <a href="/cafe/" class="btn">Back to Home</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="payment-modal-overlay" id="paymentModal">
+        <div class="payment-modal">
+            <button class="payment-modal-close" id="closePaymentModal">&times;</button>
+
+            <div class="payment-modal-header">
+                <h3>Complete Your Order</h3>
+                <div class="payment-modal-summary">
+                    <div class="summary-row"><span>Subtotal</span><span id="modalSubtotal"></span></div>
+                    <div class="summary-row"><span>Tax (10%)</span><span id="modalTax"></span></div>
+                    <div class="summary-row summary-total"><span>Total</span><span id="modalTotal"></span></div>
+                </div>
+            </div>
+
+            <div class="payment-modal-body" id="paymentModalBody">
+                <div class="payment-view" id="viewSelect">
+                    <p class="payment-view-label">Choose Payment Method</p>
+                    <div class="payment-method-grid">
+                        <button class="payment-method-btn" data-method="card" id="selectCard">
+                            <div class="payment-method-icon">&#128179;</div>
+                            <span>Credit / Debit Card</span>
+                            <small>Visa, Mastercard, Amex</small>
+                        </button>
+                        <button class="payment-method-btn" data-method="wallet" id="selectWallet">
+                            <div class="payment-method-icon">&#128176;</div>
+                            <span>Digital Wallet</span>
+                            <small>PayPal, Apple Pay & more</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="payment-view hidden" id="viewCard">
+                    <button class="payment-back-btn" id="backFromCard">&larr; Back</button>
+                    <p class="payment-view-label">&#128179; Card Payment</p>
+                    <form id="cardForm" novalidate>
+                        <div class="form-group">
+                            <label>Card Number</label>
+                            <div class="card-input-wrap">
+                                <input type="text" class="form-control" id="cardNumber" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" required>
+                                <span class="card-type-icon" id="cardTypeIcon"></span>
+                            </div>
+                            <div class="field-error" id="cardNumberError"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Expiry Date</label>
+                                <input type="text" class="form-control" id="cardExpiry" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM / YY" required>
+                                <div class="field-error" id="cardExpiryError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>CVV</label>
+                                <div class="card-input-wrap">
+                                    <input type="password" class="form-control" id="cardCvv" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="&bull;&bull;&bull;" required>
+                                    <button type="button" class="cvv-toggle" id="cvvToggle" title="Show CVV">&#128065;</button>
+                                </div>
+                                <div class="field-error" id="cardCvvError"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="save-card-toggle">
+                                <input type="checkbox" id="saveCard"> Save this card for next time
+                            </label>
+                        </div>
+                        <div class="security-badge">
+                            <span>&#128274;</span> Your payment info is encrypted and secure
+                        </div>
+                        <button type="submit" class="btn payment-submit-btn" id="payWithCard">
+                            <span class="btn-text">Pay <span id="cardPayAmount"></span></span>
+                            <span class="btn-spinner hidden"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="payment-view hidden" id="viewWallet">
+                    <button class="payment-back-btn" id="backFromWallet">&larr; Back</button>
+                    <p class="payment-view-label">&#128176; Digital Wallet</p>
+                    <div class="wallet-grid">
+                        <button class="wallet-option" data-wallet="paypal">
+                            <div class="wallet-logo" style="background:#003087;color:#fff;">Pay<span style="color:#009cde;">Pal</span></div>
+                            <span>PayPal</span>
+                        </button>
+                        <button class="wallet-option" data-wallet="apple">
+                            <div class="wallet-logo" style="background:#000;color:#fff;">&#63743; Pay</div>
+                            <span>Apple Pay</span>
+                        </button>
+                        <button class="wallet-option" data-wallet="google">
+                            <div class="wallet-logo" style="background:#fff;border:1px solid #ddd;color:#4285f4;">
+                                <span style="color:#4285f4;">G</span><span style="color:#ea4335;">o</span><span style="color:#fbbc05;">o</span><span style="color:#4285f4;">g</span><span style="color:#34a853;">l</span><span style="color:#ea4335;">e</span>
+                            </div>
+                            <span>Google Pay</span>
+                        </button>
+                        <button class="wallet-option" data-wallet="cashapp">
+                            <div class="wallet-logo" style="background:#00d632;color:#fff;">$</div>
+                            <span>Cash App</span>
+                        </button>
+                    </div>
+                    <div class="security-badge" style="margin-top:1.5rem;">
+                        <span>&#128274;</span> Redirected securely to your payment provider
+                    </div>
+                    <button type="button" class="btn payment-submit-btn" id="payWithWallet" disabled>
+                        <span class="btn-text">Select a wallet</span>
+                        <span class="btn-spinner hidden"></span>
+                    </button>
+                </div>
+
+                <div class="payment-view hidden" id="viewProcessing">
+                    <div class="processing-animation">
+                        <div class="processing-spinner"></div>
+                        <p class="processing-text">Verifying payment...</p>
+                        <p class="processing-subtext">Please do not close this window</p>
+                    </div>
+                </div>
+
+                <div class="payment-view hidden" id="viewSuccess">
+                    <div class="payment-success-content">
+                        <svg class="checkmark-svg checkmark-svg--lg" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                        <h3 style="color:var(--success);margin-top:1rem;">Payment Successful</h3>
+                        <p style="color:var(--coffee);margin-top:0.5rem;">Placing your order...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 Cafe NOMAD. Made with &#10084;&#65039; by Ziyad.</p>
+    </footer>
+
+    <script src="/cafe/js/cart.js"></script>
+    <script src="/cafe/js/main.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        const CSRF_TOKEN = Date.now().toString(36) + Math.random().toString(36).slice(2);
+        const RATE_LIMIT_MS = 3000;
+        let lastSubmitTime = 0;
+        let selectedWallet = null;
+        let isProcessing = false;
+
+        // --- Sanitization ---
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function sanitizeInput(val) {
+            return escapeHtml(String(val).trim().replace(/[<>"']/g, ''));
+        }
+
+        // --- Luhn Algorithm ---
+        function luhnCheck(num) {
+            const digits = num.replace(/\s/g, '');
+            if (!/^\d{13,19}$/.test(digits)) return false;
+            let sum = 0, alt = false;
+            for (let i = digits.length - 1; i >= 0; i--) {
+                let n = parseInt(digits[i], 10);
+                if (alt) { n *= 2; if (n > 9) n -= 9; }
+                sum += n;
+                alt = !alt;
+            }
+            return sum % 10 === 0;
+        }
+
+        // --- Card Type Detection ---
+        function detectCardType(num) {
+            const d = num.replace(/\s/g, '');
+            if (/^4/.test(d)) return { type: 'Visa', icon: 'VISA', color: '#1a1f71' };
+            if (/^5[1-5]/.test(d) || /^2[2-7]/.test(d)) return { type: 'Mastercard', icon: 'MC', color: '#eb001b' };
+            if (/^3[47]/.test(d)) return { type: 'Amex', icon: 'AMEX', color: '#006fcf' };
+            if (/^6(?:011|5)/.test(d)) return { type: 'Discover', icon: 'DISC', color: '#ff6000' };
+            if (/^35(?:2[89]|[3-8])/.test(d)) return { type: 'JCB', icon: 'JCB', color: '#0e4c96' };
+            return null;
+        }
+
+        // --- Formatting ---
+        function formatCardNumber(val) {
+            const d = val.replace(/\D/g, '').slice(0, 16);
+            const ct = detectCardType(d);
+            if (ct && ct.type === 'Amex') {
+                return d.replace(/(\d{4})(\d{0,6})(\d{0,5})/, (_, a, b, c) => [a, b, c].filter(Boolean).join(' ')).trim();
+            }
+            return d.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+        }
+
+        function formatExpiry(val) {
+            const d = val.replace(/\D/g, '').slice(0, 4);
+            if (d.length >= 2) return d.slice(0, 2) + ' / ' + d.slice(2);
+            return d;
+        }
+
+        function validateExpiry(val) {
+            const d = val.replace(/\D/g, '');
+            if (d.length < 4) return false;
+            const month = parseInt(d.slice(0, 2), 10);
+            const year = parseInt('20' + d.slice(2, 4), 10);
+            if (month < 1 || month > 12) return false;
+            const now = new Date();
+            const expiry = new Date(year, month);
+            return expiry > now;
+        }
+
+        function validateCvv(val, isAmex) {
+            const d = val.replace(/\D/g, '');
+            return isAmex ? /^\d{4}$/.test(d) : /^\d{3}$/.test(d);
+        }
+
+        // --- DOM ---
+        const modal = document.getElementById('paymentModal');
+        const viewSelect = document.getElementById('viewSelect');
+        const viewCard = document.getElementById('viewCard');
+        const viewWallet = document.getElementById('viewWallet');
+        const viewProcessing = document.getElementById('viewProcessing');
+        const viewSuccess = document.getElementById('viewSuccess');
+        const cardNumberInput = document.getElementById('cardNumber');
+        const cardExpiryInput = document.getElementById('cardExpiry');
+        const cardCvvInput = document.getElementById('cardCvv');
+        const cardTypeIcon = document.getElementById('cardTypeIcon');
+        const cardNumberError = document.getElementById('cardNumberError');
+        const cardExpiryError = document.getElementById('cardExpiryError');
+        const cardCvvError = document.getElementById('cardCvvError');
+
+        function showView(view) {
+            [viewSelect, viewCard, viewWallet, viewProcessing, viewSuccess].forEach(v => v.classList.add('hidden'));
+            view.classList.remove('hidden');
+        }
+
+        function openModal() {
+            document.getElementById('modalSubtotal').textContent = Cart.getTotal() + ' MAD';
+            document.getElementById('modalTax').textContent = Cart.getTax() + ' MAD';
+            document.getElementById('modalTotal').textContent = Cart.getGrandTotal() + ' MAD';
+            document.getElementById('cardPayAmount').textContent = Cart.getGrandTotal() + ' MAD';
+            showView(viewSelect);
+            selectedWallet = null;
+            document.querySelectorAll('.wallet-option').forEach(w => w.classList.remove('selected'));
+            document.getElementById('payWithWallet').disabled = true;
+            document.getElementById('payWithWallet').querySelector('.btn-text').textContent = 'Select a wallet';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            if (isProcessing) return;
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function clearErrors() {
+            cardNumberError.textContent = '';
+            cardExpiryError.textContent = '';
+            cardCvvError.textContent = '';
+            cardNumberInput.classList.remove('input-error');
+            cardExpiryInput.classList.remove('input-error');
+            cardCvvInput.classList.remove('input-error');
+        }
+
+        function showError(input, errorEl, msg) {
+            input.classList.add('input-error');
+            errorEl.textContent = msg;
+            input.parentElement.classList.add('shake');
+            setTimeout(() => input.parentElement.classList.remove('shake'), 500);
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('openPaymentModal').addEventListener('click', () => {
+            const form = document.getElementById('checkoutForm');
+            if (!form.reportValidity()) return;
+            openModal();
+        });
+
+        document.getElementById('closePaymentModal').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        document.getElementById('selectCard').addEventListener('click', () => { showView(viewCard); cardNumberInput.focus(); });
+        document.getElementById('selectWallet').addEventListener('click', () => showView(viewWallet));
+        document.getElementById('backFromCard').addEventListener('click', () => { clearErrors(); showView(viewSelect); });
+        document.getElementById('backFromWallet').addEventListener('click', () => showView(viewSelect));
+
+        // Card number formatting + type detection
+        cardNumberInput.addEventListener('input', (e) => {
+            const pos = e.target.selectionStart;
+            const prevLen = e.target.value.length;
+            e.target.value = formatCardNumber(e.target.value);
+            const diff = e.target.value.length - prevLen;
+            e.target.setSelectionRange(pos + diff, pos + diff);
+            const ct = detectCardType(e.target.value);
+            if (ct) {
+                cardTypeIcon.textContent = ct.icon;
+                cardTypeIcon.style.color = ct.color;
+                cardTypeIcon.classList.add('visible');
+            } else {
+                cardTypeIcon.textContent = '';
+                cardTypeIcon.classList.remove('visible');
+            }
+            cardNumberError.textContent = '';
+            e.target.classList.remove('input-error');
+        });
+
+        cardExpiryInput.addEventListener('input', (e) => {
+            const pos = e.target.selectionStart;
+            const prevLen = e.target.value.length;
+            e.target.value = formatExpiry(e.target.value);
+            const diff = e.target.value.length - prevLen;
+            e.target.setSelectionRange(pos + diff, pos + diff);
+            cardExpiryError.textContent = '';
+            e.target.classList.remove('input-error');
+        });
+
+        cardCvvInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+            cardCvvError.textContent = '';
+            e.target.classList.remove('input-error');
+        });
+
+        // CVV toggle
+        document.getElementById('cvvToggle').addEventListener('click', () => {
+            const inp = cardCvvInput;
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            document.getElementById('cvvToggle').textContent = inp.type === 'password' ? '\u{1F441}' : '\u{1F441}\u{200D}';
+        });
+
+        // Field validation on blur
+        cardNumberInput.addEventListener('blur', () => {
+            const val = cardNumberInput.value.replace(/\s/g, '');
+            if (val.length > 0 && !luhnCheck(val)) {
+                showError(cardNumberInput, cardNumberError, 'Invalid card number');
+            }
+        });
+        cardExpiryInput.addEventListener('blur', () => {
+            if (cardExpiryInput.value.length > 0 && !validateExpiry(cardExpiryInput.value)) {
+                showError(cardExpiryInput, cardExpiryError, 'Card has expired or invalid date');
+            }
+        });
+        cardCvvInput.addEventListener('blur', () => {
+            const isAmex = detectCardType(cardNumberInput.value)?.type === 'Amex';
+            if (cardCvvInput.value.length > 0 && !validateCvv(cardCvvInput.value, isAmex)) {
+                showError(cardCvvInput, cardCvvError, isAmex ? 'CVV must be 4 digits' : 'CVV must be 3 digits');
+            }
+        });
+
+        // Wallet selection
+        document.querySelectorAll('.wallet-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.wallet-option').forEach(w => w.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedWallet = btn.dataset.wallet;
+                const payBtn = document.getElementById('payWithWallet');
+                payBtn.disabled = false;
+                payBtn.querySelector('.btn-text').textContent = 'Pay ' + Cart.getGrandTotal() + ' MAD with ' + btn.querySelector('span:last-child').textContent;
+            });
+        });
+
+        // --- Card Payment Submit ---
+        document.getElementById('cardForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isProcessing) return;
+
+            clearErrors();
+            let hasError = false;
+            const cardNum = cardNumberInput.value.replace(/\s/g, '');
+            const expiry = cardExpiryInput.value;
+            const cvv = cardCvvInput.value;
+            const isAmex = detectCardType(cardNumberInput.value)?.type === 'Amex';
+
+            if (!luhnCheck(cardNum)) {
+                showError(cardNumberInput, cardNumberError, 'Invalid card number');
+                hasError = true;
+            }
+            if (!validateExpiry(expiry)) {
+                showError(cardExpiryInput, cardExpiryError, 'Invalid or expired date');
+                hasError = true;
+            }
+            if (!validateCvv(cvv, isAmex)) {
+                showError(cardCvvInput, cardCvvError, isAmex ? 'CVV must be 4 digits' : 'CVV must be 3 digits');
+                hasError = true;
+            }
+            if (hasError) return;
+
+            const now = Date.now();
+            if (now - lastSubmitTime < RATE_LIMIT_MS) {
+                alert('Please wait a moment before trying again.');
+                return;
+            }
+            lastSubmitTime = now;
+
+            await submitOrder('card', 'Credit Card ending in ' + cardNum.slice(-4));
+        });
+
+        // --- Wallet Payment Submit ---
+        document.getElementById('payWithWallet').addEventListener('click', async () => {
+            if (!selectedWallet || isProcessing) return;
+            const now = Date.now();
+            if (now - lastSubmitTime < RATE_LIMIT_MS) {
+                alert('Please wait a moment before trying again.');
+                return;
+            }
+            lastSubmitTime = now;
+
+            const walletNames = { paypal: 'PayPal', apple: 'Apple Pay', google: 'Google Pay', cashapp: 'Cash App' };
+            await submitOrder(selectedWallet, walletNames[selectedWallet]);
+        });
+
+        // --- Submit Order ---
+        async function submitOrder(method, methodLabel) {
+            isProcessing = true;
+            showView(viewProcessing);
+
+            // Small delay to simulate verification
+            await new Promise(r => setTimeout(r, 1800));
+
+            const formData = {
+                customerName: sanitizeInput(document.getElementById('customerName').value),
+                customerEmail: sanitizeInput(document.getElementById('customerEmail').value),
+                customerPhone: sanitizeInput(document.getElementById('customerPhone').value),
+                address: sanitizeInput(document.getElementById('address').value),
+                specialInstructions: sanitizeInput(document.getElementById('specialInstructions').value),
+                paymentMethod: method,
+                paymentLabel: methodLabel,
+                items: Cart.getItems().map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+                _csrf: CSRF_TOKEN
+            };
+
+            if (formData.items.length === 0) {
+                isProcessing = false;
+                showView(viewCard);
+                alert('Your cart is empty.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/cafe-api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await res.json();
+
+                if (res.ok && result.success) {
+                    showView(viewSuccess);
+                    Cart.clear();
+                    await new Promise(r => setTimeout(r, 1200));
+                    document.getElementById('checkoutForm-wrap').style.display = 'none';
+                    document.getElementById('orderSuccess').style.display = 'block';
+                    document.getElementById('orderNumber').textContent = result.order.orderNumber;
+                    closeModal();
+                } else {
+                    isProcessing = false;
+                    showView(method === 'card' ? viewCard : viewWallet);
+                    const msgDiv = document.getElementById('checkoutMsg');
+                    msgDiv.innerHTML = '<div class="message error">' + escapeHtml(result.message || 'Payment failed. Please try again.') + '</div>';
+                }
+            } catch (err) {
+                isProcessing = false;
+                showView(method === 'card' ? viewCard : viewWallet);
+                const msgDiv = document.getElementById('checkoutMsg');
+                msgDiv.innerHTML = '<div class="message error">Network error. Check your connection and try again.</div>';
+            }
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const items = Cart.getItems();
+            if (items.length === 0) {
+                window.location.href = '/cafe/cart.html';
+                return;
+            }
+            document.getElementById('checkSubtotal').textContent = Cart.getTotal() + ' MAD';
+            document.getElementById('checkTax').textContent = Cart.getTax() + ' MAD';
+            document.getElementById('checkTotal').textContent = Cart.getGrandTotal() + ' MAD';
+        });
+    })();
+    </script>
+</body>
+</html>
