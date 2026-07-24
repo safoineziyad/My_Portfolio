@@ -18,7 +18,7 @@ export const webProjects: Project[] = [
       'Full-stack admin dashboard with real-time analytics, product CRUD with image management, order lifecycle tracking with status timeline, customer management with LTV calculations, and inventory alerts. Built with Next.js 14 App Router, Prisma + SQLite, Recharts for data visualization, Zustand for state, and full REST API with pagination and search.',
     tech: ['Next.js', 'Prisma', 'SQLite', 'Recharts', 'Zustand', 'Tailwind CSS'],
     category: 'fullstack',
-    image: '/images/projects/cafe-nomad.svg',
+    image: '/images/projects/ecommerce-dashboard.svg',
     liveUrl: '/ecommerce/dashboard',
   },
   {
