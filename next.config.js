@@ -32,16 +32,6 @@ const nextConfig = {
     return rewrites;
   },
   headers: async () => {
-    const connectSrcDirectives = ["'self'", 'ws:', 'wss:'];
-    if (TASK_DASHBOARD_API_URL) {
-      try {
-        const url = new URL(TASK_DASHBOARD_API_URL);
-        connectSrcDirectives.push(url.origin);
-      } catch {
-        // ignore invalid URL
-      }
-    }
-
     return [
       {
         source: '/(.*)',
@@ -55,11 +45,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://www.youtube.com https://s.ytimg.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://rsms.me",
-              "font-src 'self' https://fonts.gstatic.com https://rsms.me",
-              "img-src 'self' data: https://images.unsplash.com https://img.youtube.com",
-              `connect-src ${connectSrcDirectives.join(' ')}`,
+              "font-src 'self' data: https://fonts.gstatic.com https://rsms.me",
+              "img-src 'self' data: blob: https://images.unsplash.com https://img.youtube.com",
+              "connect-src 'self' blob: data: ws: wss: https://*.vercel.app https://vercel.com",
               "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
             ].join('; '),
           },
