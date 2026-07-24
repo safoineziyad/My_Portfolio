@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
 import { calculateCheckout, type VatCategory } from '@/ecommerce/lib/tax';
