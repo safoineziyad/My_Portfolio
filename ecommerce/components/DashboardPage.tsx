@@ -182,7 +182,7 @@ export function DashboardPage() {
             </Link>
           </div>
           <div className="space-y-3">
-            {data.lowStockProducts.length === 0 ? (
+            {(!data.lowStockProducts || data.lowStockProducts.length === 0) ? (
               <div className="text-center py-8 text-slate-400">
                 <Package size={32} className="mx-auto mb-2 opacity-50" />
                 <p className="text-sm">All products are well stocked</p>

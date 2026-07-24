@@ -49,11 +49,12 @@ model Product {
   slug        String
   description String?
   sku         String?
-  price       Float
-  cost        Float?
-  salePrice   Float?
-  stock       Int      @default(0)
-  lowStockThreshold Int @default(10)
+  price             Float
+  cost              Float?
+  salePrice         Float?
+  stock             Int      @default(0)
+  lowStockThreshold Int      @default(10)
+  vatCategory       String   @default("standard") // standard, reduced_10, reduced_7
   status      String   @default("active") // active, draft, archived
   featured    Boolean  @default(false)
   weight      Float?
@@ -128,6 +129,7 @@ model Order {
   paymentMethod  String?
   subtotal       Float
   tax            Float    @default(0)
+  vatTotal       Float    @default(0)
   shipping       Float    @default(0)
   discount       Float    @default(0)
   total          Float
@@ -153,14 +155,16 @@ model Order {
 }
 
 model OrderItem {
-  id        String @id @default(cuid())
-  name      String
-  sku       String?
-  price     Float
-  quantity  Int
-  total     Float
-  orderId   String
-  productId String?
+  id             String @id @default(cuid())
+  name           String
+  sku            String?
+  price          Float
+  quantity       Int
+  total          Float
+  vatRateApplied Float  @default(0)
+  vatAmount      Float  @default(0)
+  orderId        String
+  productId      String?
 
   order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product? @relation(fields: [productId], references: [id])
@@ -266,8 +270,294 @@ model AuditLog {
   entity    String
   entityId  String?
   details   String?
+  memberId  String?
+  createdAt DateTime @default(now())
+
+  member TeamMember? @relation(fields: [memberId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  type      String   @default("system") // order, stock, system
+  read      Boolean  @default(false)
   userId    String   @default("admin")
   createdAt DateTime @default(now())
 
-  @@map("audit_logs")
+  @@index([userId])
+  @@map("notifications")
+}
+
+// ---------------------------------------------------------------------------
+// Team Management — Admin dashboard access control
+// ---------------------------------------------------------------------------
+model TeamMember {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("member") // admin, manager, member
+  avatar       String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions  Session[]
+  auditLogs AuditLog[]
+
+  @@map("team_members")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  memberId  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  member TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([memberId])
+  @@map("sessions")
+}
+
+// ---------------------------------------------------------------------------
+// Multi-Vendor Marketplace — Buyer/Seller models
+// ---------------------------------------------------------------------------
+model Vendor {
+  id              String   @id @default(cuid())
+  businessName    String
+  slug            String   @unique
+  description     String?
+  logo            String?
+  banner          String?
+  taxId           String?
+  businessAddress String?
+  phone           String?
+  email           String
+  rating          Float    @default(0)
+  responseTime    String?  // e.g. "within 24h"
+  isApproved      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  commissionRate  Float    @default(0.10) // platform commission (10% default)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user       User              @relation(fields: [userId], references: [id])
+  userId     String   @unique
+  products   MarketplaceProduct[]
+  orders     MarketplaceOrder[]
+  payouts    Payout[]
+
+  @@index([userId])
+  @@index([isApproved])
+  @@map("vendors")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("buyer") // buyer, seller, admin
+  avatar       String?
+  phone        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  vendor   Vendor?
+  orders   MarketplaceOrder[]
+  reviews  MarketplaceReview[]
+  carts    MarketplaceCart[]
+
+  @@map("marketplace_users")
+}
+
+model MarketplaceProduct {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String
+  description     String?
+  price           Float
+  compareAtPrice  Float?
+  stock           Int      @default(0)
+  sku             String?
+  images          String   @default("[]") // JSON array of image URLs
+  vatCategory     String   @default("standard")
+  status          String   @default("pending") // pending, active, rejected, archived
+  featured        Boolean  @default(false)
+  weight          Float?
+  shippingInfo    String?  // shipping dimensions/weight info
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  vendor     Vendor              @relation(fields: [vendorId], references: [id])
+  vendorId   String
+  category   MarketplaceCategory? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  orderItems MarketplaceOrderItem[]
+  reviews    MarketplaceReview[]
+  cartItems  MarketplaceCartItem[]
+
+  @@index([vendorId])
+  @@index([categoryId])
+  @@index([status])
+  @@map("marketplace_products")
+}
+
+model MarketplaceCategory {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  icon      String?
+  createdAt DateTime @default(now())
+
+  products MarketplaceProduct[]
+
+  @@map("marketplace_categories")
+}
+
+model MarketplaceOrder {
+  id             String   @id @default(cuid())
+  orderNumber    String   @unique
+  status         String   @default("pending") // pending, paid, packing, shipped, delivered, completed, cancelled, returned
+  paymentStatus  String   @default("pending")
+  paymentMethod  String?
+  subtotal       Float
+  tax            Float    @default(0)
+  shipping       Float    @default(0)
+  commission     Float    @default(0) // platform fee
+  total          Float
+  shippingAddress String?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+  vendor  Vendor  @relation(fields: [vendorId], references: [id])
+  vendorId String
+  items   MarketplaceOrderItem[]
+  timeline MarketplaceOrderTimeline[]
+  dispute Dispute?
+
+  @@index([userId])
+  @@index([vendorId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("marketplace_orders")
+}
+
+model MarketplaceOrderItem {
+  id        String @id @default(cuid())
+  name      String
+  price     Float
+  quantity  Int
+  total     Float
+  orderId   String
+  productId String
+
+  order   MarketplaceOrder    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product MarketplaceProduct @relation(fields: [productId], references: [id])
+
+  @@map("marketplace_order_items")
+}
+
+model MarketplaceOrderTimeline {
+  id        String   @id @default(cuid())
+  status    String
+  note      String?
+  orderId   String
+  createdAt DateTime @default(now())
+
+  order MarketplaceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("marketplace_order_timeline")
+}
+
+model MarketplaceReview {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?
+  status    String   @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+
+  user      User              @relation(fields: [userId], references: [id])
+  userId    String
+  product   MarketplaceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  @@index([productId])
+  @@index([userId])
+  @@map("marketplace_reviews")
+}
+
+model MarketplaceCart {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User               @relation(fields: [userId], references: [id])
+  userId String
+  items  MarketplaceCartItem[]
+
+  @@unique([userId])
+  @@map("marketplace_carts")
+}
+
+model MarketplaceCartItem {
+  id        String @id @default(cuid())
+  quantity  Int
+  cartId    String
+  productId String
+
+  cart    MarketplaceCart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product MarketplaceProduct @relation(fields: [productId], references: [id])
+
+  @@map("marketplace_cart_items")
+}
+
+model Dispute {
+  id          String   @id @default(cuid())
+  reason      String
+  description String
+  status      String   @default("open") // open, under_review, resolved, closed
+  resolution  String?
+  orderId     String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  order MarketplaceOrder @relation(fields: [orderId], references: [id])
+
+  @@index([status])
+  @@map("disputes")
+}
+
+model Payout {
+  id        String   @id @default(cuid())
+  amount    Float
+  status    String   @default("pending") // pending, processing, completed, failed
+  method    String?  // bank_transfer, etc.
+  reference String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendor Vendor @relation(fields: [vendorId], references: [id])
+  vendorId String
+
+  @@index([vendorId])
+  @@index([status])
+  @@map("payouts")
+}
+
+model PlatformSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  @@map("platform_settings")
 }

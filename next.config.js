@@ -12,6 +12,10 @@ const nextConfig = {
   async rewrites() {
     const rewrites = [
       {
+        source: '/cafe',
+        destination: '/cafe/index.html',
+      },
+      {
         source: '/cafe-api/:path*',
         destination: '/api/cafe-api/:path*',
       },

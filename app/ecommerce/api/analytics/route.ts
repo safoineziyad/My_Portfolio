@@ -80,6 +80,27 @@ export async function GET() {
       count: s._count.status,
     }));
 
+    const recentOrders = await prisma.order.findMany({
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        paymentStatus: true,
+        total: true,
+        createdAt: true,
+        customer: { select: { name: true } },
+      },
+    });
+
+    const lowStockProducts = await prisma.product.findMany({
+      where: { stock: { lte: 10 } },
+      select: { id: true, name: true, stock: true, lowStockThreshold: true },
+      orderBy: { stock: 'asc' },
+      take: 10,
+    });
+
     return NextResponse.json({
       stats: {
         totalRevenue: Math.round((totalRevenue._sum.total || 0) * 100) / 100,
@@ -93,8 +114,10 @@ export async function GET() {
         customersChange: 0,
       },
       revenueByDay,
+      recentOrders,
       topProducts,
       ordersByStatus,
+      lowStockProducts,
     });
   } catch (error) {
     console.error('Analytics error:', error);
