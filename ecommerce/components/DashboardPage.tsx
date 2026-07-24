@@ -73,7 +73,9 @@ export function DashboardPage() {
   useEffect(() => {
     fetch('/ecommerce/api/analytics')
       .then(r => r.json())
-      .then(setData)
+      .then(d => {
+        if (d && d.stats) setData(d);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
