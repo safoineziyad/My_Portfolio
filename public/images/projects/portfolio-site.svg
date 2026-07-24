@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)" rx="16"/>
+  <!-- Browser window -->
+  <rect x="60" y="40" width="680" height="420" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <rect x="60" y="40" width="680" height="36" rx="12" fill="#0f172a"/>
+  <circle cx="85" cy="58" r="5" fill="#ef4444"/>
+  <circle cx="103" cy="58" r="5" fill="#eab308"/>
+  <circle cx="121" cy="58" r="5" fill="#22c55e"/>
+  <rect x="160" y="50" width="300" height="16" rx="8" fill="#1e293b"/>
+  <rect x="170" y="54" width="120" height="8" rx="4" fill="#334155"/>
+  <!-- Navbar -->
+  <rect x="60" y="76" width="680" height="40" fill="#0f172a"/>
+  <circle cx="90" cy="96" r="8" fill="#6366f1"/>
+  <rect x="300" y="92" width="40" height="6" rx="3" fill="#475569"/>
+  <rect x="350" y="92" width="40" height="6" rx="3" fill="#475569"/>
+  <rect x="400" y="92" width="40" height="6" rx="3" fill="#475569"/>
+  <rect x="450" y="92" width="40" height="6" rx="3" fill="#475569"/>
+  <!-- Hero section -->
+  <rect x="160" y="140" width="320" height="16" rx="4" fill="#e2e8f0"/>
+  <rect x="200" y="170" width="240" height="10" rx="4" fill="#64748b"/>
+  <rect x="220" y="190" width="200" height="8" rx="4" fill="#475569"/>
+  <!-- Gradient button -->
+  <rect x="260" y="215" width="120" height="30" rx="15" fill="#6366f1"/>
+  <rect x="275" y="225" width="60" height="6" rx="3" fill="#ffffff" opacity="0.8"/>
+  <!-- Particle dots -->
+  <circle cx="520" cy="160" r="2" fill="#6366f1" opacity="0.5"/>
+  <circle cx="550" cy="140" r="1.5" fill="#8b5cf6" opacity="0.4"/>
+  <circle cx="580" cy="170" r="2.5" fill="#6366f1" opacity="0.3"/>
+  <circle cx="600" cy="130" r="1" fill="#a78bfa" opacity="0.6"/>
+  <circle cx="560" cy="200" r="2" fill="#818cf8" opacity="0.4"/>
+  <circle cx="620" cy="180" r="1.5" fill="#6366f1" opacity="0.5"/>
+  <!-- Section blocks (About, Skills, Projects) -->
+  <rect x="100" y="270" width="200" height="4" rx="2" fill="#6366f1" opacity="0.3"/>
+  <rect x="100" y="280" width="160" height="3" rx="1.5" fill="#334155"/>
+  <rect x="100" y="290" width="180" height="3" rx="1.5" fill="#334155"/>
+  <!-- Skills tags -->
+  <rect x="100" y="310" width="50" height="18" rx="9" fill="#6366f1" opacity="0.15"/>
+  <rect x="108" y="316" width="34" height="6" rx="3" fill="#6366f1" opacity="0.5"/>
+  <rect x="160" y="310" width="50" height="18" rx="9" fill="#8b5cf6" opacity="0.15"/>
+  <rect x="168" y="316" width="34" height="6" rx="3" fill="#8b5cf6" opacity="0.5"/>
+  <rect x="220" y="310" width="50" height="18" rx="9" fill="#6366f1" opacity="0.15"/>
+  <rect x="228" y="316" width="34" height="6" rx="3" fill="#6366f1" opacity="0.5"/>
+  <!-- Project cards -->
+  <rect x="400" y="270" width="140" height="80" rx="8" fill="#0f172a"/>
+  <rect x="410" y="280" width="120" height="30" rx="4" fill="#1e293b"/>
+  <rect x="410" y="316" width="80" height="4" rx="2" fill="#475569"/>
+  <rect x="410" y="326" width="60" height="3" rx="1.5" fill="#334155"/>
+  <rect x="560" y="270" width="140" height="80" rx="8" fill="#0f172a"/>
+  <rect x="570" y="280" width="120" height="30" rx="4" fill="#1e293b"/>
+  <rect x="570" y="316" width="80" height="4" rx="2" fill="#475569"/>
+  <rect x="570" y="326" width="60" height="3" rx="1.5" fill="#334155"/>
+  <!-- Contact section -->
+  <rect x="100" y="360" width="200" height="4" rx="2" fill="#8b5cf6" opacity="0.3"/>
+  <rect x="100" y="370" width="300" height="60" rx="8" fill="#0f172a"/>
+  <rect x="115" y="380" width="100" height="6" rx="3" fill="#334155"/>
+  <rect x="115" y="395" width="200" height="6" rx="3" fill="#334155"/>
+  <rect x="115" y="410" width="80" height="14" rx="7" fill="#6366f1"/>
+  <!-- Footer -->
+  <rect x="60" y="446" width="680" height="14" fill="#0f172a"/>
+</svg>

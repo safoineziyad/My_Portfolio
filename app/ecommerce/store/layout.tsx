@@ -24,9 +24,13 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     const stored = localStorage.getItem('marketplace_user');
     if (stored) {
-      const parsed = JSON.parse(stored);
-      setUser(parsed);
-      fetchCartCount(parsed.id);
+      try {
+        const parsed = JSON.parse(stored);
+        setUser(parsed);
+        fetchCartCount(parsed.id);
+      } catch {
+        localStorage.removeItem('marketplace_user');
+      }
     }
   }, [pathname]);
 

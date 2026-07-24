@@ -39,8 +39,7 @@ export const webProjects: Project[] = [
       'Next.js 14 App Router portfolio with server-side rendering, Tailwind CSS design system, and Framer Motion animations. Includes a particle canvas hero, typewriter effect, scroll-reveal transitions, contact form with rate limiting and honeypot spam protection, and an embedded e-commerce admin dashboard.',
     tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
     category: 'fullstack',
-    image: '/images/projects/weather.svg',
-    liveUrl: '/',
+    image: '/images/projects/portfolio-site.svg',
     githubUrl: 'https://github.com/safoineziyad/portfolio',
   },
 ];

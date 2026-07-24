@@ -4,6 +4,8 @@ import { useState, type FormEvent } from 'react';
 import { Send, Mail, CheckCircle, AlertCircle } from 'lucide-react';
 import { ScrollReveal } from './ScrollReveal';
 
+const WEB3FORMS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || '';
+
 interface FormStatus {
   type: 'success' | 'error' | null;
   message: string;
@@ -22,23 +24,34 @@ export default function Contact() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (formData.honeypot) return;
+
     setLoading(true);
     setStatus({ type: null, message: '' });
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          from_name: 'Portfolio Contact Form',
+          to: 'safoineziyad@gmail.com',
+        }),
       });
 
       const data = await res.json();
 
-      if (res.ok) {
+      if (data.success) {
         setStatus({ type: 'success', message: 'Message sent successfully! I will get back to you soon.' });
         setFormData({ name: '', email: '', subject: '', message: '', honeypot: '' });
       } else {
-        setStatus({ type: 'error', message: data.error || 'Something went wrong. Please try again.' });
+        setStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
       }
     } catch {
       setStatus({ type: 'error', message: 'Network error. Please try again later.' });
