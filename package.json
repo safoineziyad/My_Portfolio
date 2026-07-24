@@ -10,8 +10,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@libsql/client": "^0.17.4",
-    "@prisma/adapter-libsql": "^7.9.0",
     "@prisma/client": "^5.22.0",
     "clsx": "^2.1.0",
     "date-fns": "^4.4.0",

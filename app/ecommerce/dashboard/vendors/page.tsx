@@ -157,9 +157,9 @@ export default function VendorsPage() {
       });
       const res = await fetch(`/ecommerce/api/admin/marketplace/vendors?${params}`);
       const data = await res.json();
-      setVendors(data.data);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
+      setVendors(data.data || []);
+      setTotalPages(data.totalPages || 1);
+      setTotal(data.total || 0);
     } catch (err) {
       console.error(err);
     } finally {

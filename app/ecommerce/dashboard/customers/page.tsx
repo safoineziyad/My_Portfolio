@@ -28,8 +28,8 @@ export default function CustomersPage() {
       const params = new URLSearchParams({ page: page.toString(), pageSize: '12', search });
       const res = await fetch(`/ecommerce/api/customers?${params}`);
       const data = await res.json();
-      setCustomers(data.data);
-      setTotalPages(data.totalPages);
+      setCustomers(data.data || []);
+      setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error(err);
     } finally {

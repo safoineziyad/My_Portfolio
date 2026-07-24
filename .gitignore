@@ -49,3 +49,6 @@ skills-lock.json
 # prisma generated
 /lib/generated/prisma
 prisma.config.ts
+
+.vercel
+.env*

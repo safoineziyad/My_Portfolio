@@ -159,9 +159,9 @@ export default function ModerationPage() {
       });
       const res = await fetch(`/ecommerce/api/admin/marketplace/products?${params}`);
       const data = await res.json();
-      setProducts(data.data);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
+      setProducts(data.data || []);
+      setTotalPages(data.totalPages || 1);
+      setTotal(data.total || 0);
     } catch (err) {
       console.error(err);
     } finally {

@@ -303,8 +303,8 @@ export default function ProductsPage() {
       const params = new URLSearchParams({ page: page.toString(), pageSize: '12', search, status: statusFilter });
       const res = await fetch(`/ecommerce/api/products?${params}`);
       const data = await res.json();
-      setProducts(data.data);
-      setTotalPages(data.totalPages);
+      setProducts(data.data || []);
+      setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error(err);
     } finally {
@@ -317,7 +317,7 @@ export default function ProductsPage() {
   }, [page, statusFilter]);
 
   useEffect(() => {
-    fetch('/ecommerce/api/categories').then(r => r.json()).then(setCategories).catch(console.error);
+    fetch('/ecommerce/api/categories').then(r => r.json()).then(d => setCategories(Array.isArray(d) ? d : [])).catch(console.error);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {

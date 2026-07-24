@@ -185,9 +185,9 @@ export default function OrdersPage() {
       const params = new URLSearchParams({ page: page.toString(), pageSize: '15', search, status: statusFilter });
       const res = await fetch(`/ecommerce/api/orders?${params}`);
       const data = await res.json();
-      setOrders(data.data);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
+      setOrders(data.data || []);
+      setTotalPages(data.totalPages || 1);
+      setTotal(data.total || 0);
     } catch (err) {
       console.error(err);
     } finally {

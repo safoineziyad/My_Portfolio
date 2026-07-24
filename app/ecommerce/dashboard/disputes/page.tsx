@@ -155,9 +155,9 @@ export default function DisputesPage() {
       });
       const res = await fetch(`/ecommerce/api/admin/marketplace/disputes?${params}`);
       const data = await res.json();
-      setDisputes(data.data);
-      setTotalPages(data.totalPages);
-      setTotal(data.total);
+      setDisputes(data.data || []);
+      setTotalPages(data.totalPages || 1);
+      setTotal(data.total || 0);
     } catch (err) {
       console.error(err);
     } finally {
