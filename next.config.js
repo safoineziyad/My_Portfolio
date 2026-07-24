@@ -3,6 +3,7 @@ const TASK_DASHBOARD_API_URL = process.env.TASK_DASHBOARD_API_URL || '';
 
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['recharts'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
