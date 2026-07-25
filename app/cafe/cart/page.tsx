@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCartStore } from '@/lib/cafe/cart-store';
 
 export default function CartPage() {
@@ -55,12 +56,12 @@ export default function CartPage() {
                   <tr key={item.id}>
                     <td>
                       {item.image && (
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
+                          width={50}
+                          height={50}
                           style={{
-                            width: 50,
-                            height: 50,
                             borderRadius: 8,
                             objectFit: 'cover',
                             marginRight: 8,

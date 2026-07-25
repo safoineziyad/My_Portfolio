@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import type { Reservation, Order, MenuItem } from '@/lib/cafe/types';
 
 type Tab = 'reservations' | 'orders' | 'menu';
@@ -481,12 +482,12 @@ export default function AdminDashboardPage() {
                       <tr key={item.id}>
                         <td>
                           {item.image && (
-                            <img
+                            <Image
                               src={item.image}
                               alt={item.name}
+                              width={50}
+                              height={50}
                               style={{
-                                width: 50,
-                                height: 50,
                                 borderRadius: 8,
                                 objectFit: 'cover',
                                 marginRight: 8,

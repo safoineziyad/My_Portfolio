@@ -1,14 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { MenuItem, MenuCategory } from '@/lib/cafe/types';
 import Reveal from '@/components/cafe/RevealOnScroll';
 import FilterBar from '@/components/cafe/FilterBar';
 import MenuCard from '@/components/cafe/MenuCard';
+import MenuSkeleton from '@/components/cafe/MenuSkeleton';
 
 export default function MenuPage() {
   const [allItems, setAllItems] = useState<MenuItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<MenuCategory>('All');
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,10 +25,22 @@ export default function MenuPage() {
       .catch(() => setLoading(false));
   }, []);
 
-  const filtered =
-    activeCategory === 'All'
-      ? allItems
-      : allItems.filter((item) => item.category === activeCategory);
+  const filtered = useMemo(() => {
+    let items = allItems;
+    if (activeCategory !== 'All') {
+      items = items.filter((item) => item.category === activeCategory);
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      items = items.filter(
+        (item) =>
+          item.name.toLowerCase().includes(q) ||
+          item.description.toLowerCase().includes(q) ||
+          item.category.toLowerCase().includes(q)
+      );
+    }
+    return items;
+  }, [allItems, activeCategory, search]);
 
   return (
     <section className="cafe-section" style={{ marginTop: 80 }}>
@@ -38,16 +52,32 @@ export default function MenuPage() {
       </Reveal>
 
       <Reveal>
+        <div className="search-bar">
+          <span className="search-icon">&#128269;</span>
+          <input
+            type="text"
+            placeholder="Search menu items..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </Reveal>
+
+      <Reveal>
         <FilterBar active={activeCategory} onChange={setActiveCategory} />
       </Reveal>
 
       <div className="menu-grid">
         {loading ? (
-          <p className="loading-text">Loading menu...</p>
+          <MenuSkeleton />
         ) : filtered.length > 0 ? (
           filtered.map((item) => <MenuCard key={item.id} item={item} />)
         ) : (
-          <p className="loading-text">No items in this category.</p>
+          <p className="loading-text">
+            {search
+              ? `No items found for "${search}"`
+              : 'No items in this category.'}
+          </p>
         )}
       </div>
     </section>
