@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { ArrowUp } from 'lucide-react';
 import { FaGithub, FaTwitter } from 'react-icons/fa';
 
@@ -39,6 +40,12 @@ export default function Footer() {
               );
             })}
           </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-text-main/40">
+          <Link href="/blog" className="transition-colors hover:text-primary">Blog</Link>
+          <Link href="/cafe" className="transition-colors hover:text-primary">Cafe NOMAD</Link>
+          <Link href="/ecommerce" className="transition-colors hover:text-primary">Dashboard</Link>
         </div>
 
         <div className="mt-8 flex justify-center">

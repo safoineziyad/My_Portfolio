@@ -1,22 +1,41 @@
-const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
+type HeaderLike = { get(name: string): string | null };
 
-const WINDOW_MS = 60 * 60 * 1000;
-const MAX_REQUESTS = 3;
+type RateLimitOptions = {
+  limit?: number;
+  windowMs?: number;
+};
 
-export function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
+const buckets = new Map<string, { count: number; resetAt: number }>();
+
+export function getClientIp(
+  request: Request | { headers: HeaderLike }
+): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) return realIp;
+  return 'unknown';
+}
+
+export function checkRateLimit(
+  key: string,
+  options?: RateLimitOptions
+): { allowed: boolean; retryAfter?: number } {
+  const limit = options?.limit ?? 10;
+  const windowMs = options?.windowMs ?? 60_000;
   const now = Date.now();
-  const record = rateLimitMap.get(ip);
+  const bucket = buckets.get(key);
 
-  if (!record || now - record.timestamp > WINDOW_MS) {
-    rateLimitMap.set(ip, { count: 1, timestamp: now });
+  if (!bucket || now >= bucket.resetAt) {
+    buckets.set(key, { count: 1, resetAt: now + windowMs });
     return { allowed: true };
   }
 
-  if (record.count >= MAX_REQUESTS) {
-    const retryAfter = Math.ceil((WINDOW_MS - (now - record.timestamp)) / 1000);
+  if (bucket.count >= limit) {
+    const retryAfter = Math.ceil((bucket.resetAt - now) / 1000);
     return { allowed: false, retryAfter };
   }
 
-  record.count += 1;
+  bucket.count += 1;
   return { allowed: true };
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useCallback, useState } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -67,9 +68,8 @@ export default function ImageUpload({
   return (
     <div className={className}>
       {preview ? (
-        <div className="relative">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+        <div className="relative overflow-hidden rounded-lg">
+          <Image src={preview} alt="Preview" width={800} height={320} className="w-full h-48 object-cover rounded-lg" unoptimized />
           {!uploading && (
             <button
               type="button"

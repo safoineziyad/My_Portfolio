@@ -1,11 +1,13 @@
+import bcrypt from 'bcryptjs';
 import prisma from '@/ecommerce/lib/db';
 
 export function hashPassword(password: string): string {
-  return btoa(password);
+  return bcrypt.hashSync(password, 12);
 }
 
 export function verifyPassword(password: string, hash: string): boolean {
-  return btoa(password) === hash;
+  if (!hash || !hash.startsWith('$2')) return false;
+  return bcrypt.compareSync(password, hash);
 }
 
 export async function createSession(memberId: string): Promise<string> {

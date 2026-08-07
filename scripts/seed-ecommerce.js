@@ -1,4 +1,6 @@
+require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
+
 const prisma = new PrismaClient();
 
 const STORE_ID = 'store_main';

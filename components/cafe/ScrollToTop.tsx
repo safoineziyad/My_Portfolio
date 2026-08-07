@@ -17,27 +17,7 @@ export default function ScrollToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="Scroll to top"
-      style={{
-        position: 'fixed',
-        bottom: 30,
-        left: 30,
-        width: 48,
-        height: 48,
-        borderRadius: '50%',
-        background: 'var(--espresso)',
-        color: 'var(--cream)',
-        border: '2px solid var(--terracotta)',
-        fontSize: '1.4rem',
-        cursor: 'pointer',
-        zIndex: 9998,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-        transition: 'all 0.3s ease',
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-      }}
+      className="fixed bottom-[30px] left-[30px] w-12 h-12 rounded-full bg-[var(--espresso)] text-[var(--cream)] border-2 border-[var(--terracotta)] text-[1.4rem] cursor-pointer z-[9998] flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
     >
       &#8593;
     </button>

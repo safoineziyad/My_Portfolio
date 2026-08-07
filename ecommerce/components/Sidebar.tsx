@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Package, ShoppingCart, Users, BarChart3,
   Settings, ChevronLeft, ChevronRight, Store, Bell, Search,
   Menu, X, ShieldCheck, UsersRound, AlertTriangle, StoreIcon,
-  ExternalLink, UserCog, Globe,
+  ExternalLink, FileText, LogOut,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useUIStore } from '@/ecommerce/store/ui';
@@ -18,11 +18,13 @@ const navItems = [
   { href: '/ecommerce/dashboard/orders', label: 'Orders', icon: ShoppingCart },
   { href: '/ecommerce/dashboard/customers', label: 'Customers', icon: Users },
   { href: '/ecommerce/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/ecommerce/dashboard/blog', label: 'Blog', icon: FileText },
   { href: '/ecommerce/dashboard/team', label: 'Team', icon: UsersRound },
   { href: '/ecommerce/dashboard/moderation', label: 'Moderation', icon: ShieldCheck },
   { href: '/ecommerce/dashboard/vendors', label: 'Vendors', icon: StoreIcon },
   { href: '/ecommerce/dashboard/disputes', label: 'Disputes', icon: AlertTriangle },
   { href: '/ecommerce/dashboard/marketplace-settings', label: 'Mkt Settings', icon: Settings },
+  { href: '/ecommerce/vendor', label: 'Vendor Panel', icon: StoreIcon },
   { href: '/ecommerce/store', label: 'View Store', icon: ExternalLink, external: true },
   { href: '/ecommerce/dashboard/settings', label: 'Settings', icon: Settings },
 ];
@@ -35,6 +37,7 @@ const searchablePages = [
   { label: 'Analytics', href: '/ecommerce/dashboard/analytics', keywords: ['analytics', 'charts', 'reports', 'revenue'] },
   { label: 'Settings', href: '/ecommerce/dashboard/settings', keywords: ['settings', 'config', 'preferences'] },
   { label: 'Team', href: '/ecommerce/dashboard/team', keywords: ['team', 'members', 'users', 'roles'] },
+  { label: 'Blog', href: '/ecommerce/dashboard/blog', keywords: ['blog', 'posts', 'articles', 'content'] },
   { label: 'Moderation', href: '/ecommerce/dashboard/moderation', keywords: ['moderation', 'approve', 'reject', 'listings'] },
   { label: 'Vendors', href: '/ecommerce/dashboard/vendors', keywords: ['vendors', 'sellers', 'stores'] },
   { label: 'Disputes', href: '/ecommerce/dashboard/disputes', keywords: ['disputes', 'complaints', 'issues'] },
@@ -347,6 +350,16 @@ export function TopBar({ title }: { title: string }) {
             <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">
               ZS
             </div>
+            <button
+              onClick={async () => {
+                await fetch('/ecommerce/api/auth/logout', { method: 'POST' }).catch(() => {});
+                router.push('/ecommerce/login');
+              }}
+              title="Sign out"
+              className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
       </header>

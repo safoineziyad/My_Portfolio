@@ -427,6 +427,7 @@ model MarketplaceOrder {
   status         String   @default("pending") // pending, paid, packing, shipped, delivered, completed, cancelled, returned
   paymentStatus  String   @default("pending")
   paymentMethod  String?
+  stripeSessionId String?  @unique
   subtotal       Float
   tax            Float    @default(0)
   shipping       Float    @default(0)
@@ -560,4 +561,107 @@ model PlatformSetting {
   value String
 
   @@map("platform_settings")
+}
+
+// ---------------------------------------------------------------------------
+// Blog — public posts with tag support
+// ---------------------------------------------------------------------------
+model BlogPost {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  excerpt    String?
+  content    String
+  coverImage String?
+  published  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tags       BlogTag[]
+
+  @@index([published])
+  @@index([createdAt])
+  @@map("blog_posts")
+}
+
+model BlogTag {
+  id    String @id @default(cuid())
+  name  String @unique
+
+  posts BlogPost[]
+
+  @@map("blog_tags")
+}
+
+// ---------------------------------------------------------------------------
+// Cafe NOMAD — JSON-file DB mirrored into Postgres so writes work on Vercel
+// ---------------------------------------------------------------------------
+model CafeMenuItem {
+  id          Int     @id
+  name        String
+  description String  @default("")
+  price       Float
+  category    String
+  image       String  @default("")
+  isPopular   Boolean @default(false)
+
+  @@map("cafe_menu_items")
+}
+
+model CafeOrder {
+  id                  String @id
+  orderNumber         String @unique
+  customerName        String
+  customerEmail       String
+  customerPhone       String
+  address             String
+  specialInstructions String @default("")
+  status              String @default("pending")
+  paymentMethod       String @default("cash")
+  paymentStatus       String @default("pending")
+  stripeSessionId     String? @unique
+  total               Float
+  createdAt           String
+
+  items CafeOrderItem[]
+
+  @@map("cafe_orders")
+}
+
+model CafeOrderItem {
+  id          String @id @default(cuid())
+  menuItemId  Int
+  name        String
+  quantity    Int
+  priceAtTime Float
+  orderId     String
+
+  order CafeOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("cafe_order_items")
+}
+
+model CafeReservation {
+  id              String @id
+  name            String
+  email           String @default("")
+  phone           String
+  date            String
+  time            String
+  guests          Int
+  specialRequests String @default("")
+  status          String @default("pending")
+  createdAt       String
+
+  @@map("cafe_reservations")
+}
+
+model CafeContactMessage {
+  id        String @id
+  name      String
+  email     String
+  message   String
+  createdAt String
+
+  @@map("cafe_contact_messages")
 }

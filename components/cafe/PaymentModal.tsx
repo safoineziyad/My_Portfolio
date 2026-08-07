@@ -12,7 +12,7 @@ import {
   sanitizeInput,
 } from '@/lib/cafe/payment-utils';
 
-type View = 'select' | 'card' | 'wallet' | 'processing' | 'success';
+type View = 'select' | 'card' | 'processing' | 'success';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -35,7 +35,6 @@ export default function PaymentModal({
 }: PaymentModalProps) {
   const { items, getGrandTotal, getTax, getTotal, clear } = useCartStore();
   const [view, setView] = useState<View>('select');
-  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
@@ -57,7 +56,6 @@ export default function PaymentModal({
   useEffect(() => {
     if (isOpen) {
       setView('select');
-      setSelectedWallet(null);
       setIsProcessing(false);
       setErrors({ cardNumber: '', cardExpiry: '', cardCvv: '' });
     }
@@ -108,8 +106,6 @@ export default function PaymentModal({
     setIsProcessing(true);
     showView('processing');
 
-    await new Promise((r) => setTimeout(r, 1800));
-
     const orderData = {
       ...formData,
       customerName: sanitizeInput(formData.customerName),
@@ -135,6 +131,30 @@ export default function PaymentModal({
     }
 
     try {
+      if (method === 'card') {
+        const checkoutRes = await fetch('/api/stripe/cafe-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: items.map((i) => ({ name: i.name, price: i.price, quantity: i.quantity })),
+            customerName: orderData.customerName,
+            customerEmail: orderData.customerEmail,
+            customerPhone: orderData.customerPhone,
+            address: orderData.address,
+            specialInstructions: orderData.specialInstructions,
+          }),
+        });
+        const checkoutData = await checkoutRes.json();
+        if (checkoutData.url) {
+          window.location.href = checkoutData.url;
+          return;
+        }
+        setIsProcessing(false);
+        showView('card');
+        alert(checkoutData.error || 'Unable to start payment. Please try again.');
+        return;
+      }
+
       const res = await fetch('/api/cafe-api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -150,12 +170,12 @@ export default function PaymentModal({
         onClose();
       } else {
         setIsProcessing(false);
-        showView(method === 'card' ? 'card' : 'wallet');
+        showView('card');
         alert(result.message || 'Payment failed. Please try again.');
       }
     } catch {
       setIsProcessing(false);
-      showView(method === 'card' ? 'card' : 'wallet');
+      showView('card');
       alert('Network error. Check your connection and try again.');
     }
   };
@@ -197,24 +217,6 @@ export default function PaymentModal({
     lastSubmitRef.current = now;
 
     await submitOrder('card', 'Credit Card ending in ' + cardNum.slice(-4));
-  };
-
-  const handleWalletPay = async () => {
-    if (!selectedWallet || isProcessing) return;
-    const now = Date.now();
-    if (now - lastSubmitRef.current < RATE_LIMIT_MS) {
-      alert('Please wait a moment before trying again.');
-      return;
-    }
-    lastSubmitRef.current = now;
-
-    const walletNames: Record<string, string> = {
-      paypal: 'PayPal',
-      apple: 'Apple Pay',
-      google: 'Google Pay',
-      cashapp: 'Cash App',
-    };
-    await submitOrder(selectedWallet, walletNames[selectedWallet]);
   };
 
   const grandTotal = getGrandTotal();
@@ -267,14 +269,6 @@ export default function PaymentModal({
                 <div className="payment-method-icon">&#128179;</div>
                 <span>Credit / Debit Card</span>
                 <small>Visa, Mastercard, Amex</small>
-              </button>
-              <button
-                className="payment-method-btn"
-                onClick={() => showView('wallet')}
-              >
-                <div className="payment-method-icon">&#128176;</div>
-                <span>Digital Wallet</span>
-                <small>PayPal, Apple Pay & more</small>
               </button>
             </div>
           </div>
@@ -375,62 +369,6 @@ export default function PaymentModal({
                 <span className={`btn-spinner${isProcessing ? '' : ' hidden'}`} />
               </button>
             </form>
-          </div>
-
-          {/* Wallet View */}
-          <div className={`payment-view${view !== 'wallet' ? ' hidden' : ''}`}>
-            <button
-              className="payment-back-btn"
-              onClick={() => showView('select')}
-            >
-              &larr; Back
-            </button>
-            <p className="payment-view-label">&#128176; Digital Wallet</p>
-            <div className="wallet-grid">
-              {[
-                { key: 'paypal', name: 'PayPal', bg: '#003087', text: 'Pay' },
-                { key: 'apple', name: 'Apple Pay', bg: '#000', text: '\uF8FF Pay' },
-                {
-                  key: 'google',
-                  name: 'Google Pay',
-                  bg: '#fff',
-                  text: 'Gpay',
-                },
-                { key: 'cashapp', name: 'Cash App', bg: '#00d632', text: '$' },
-              ].map((w) => (
-                <button
-                  key={w.key}
-                  className={`wallet-option${selectedWallet === w.key ? ' selected' : ''}`}
-                  onClick={() => {
-                    setSelectedWallet(w.key);
-                  }}
-                >
-                  <div
-                    className="wallet-logo"
-                    style={{ background: w.bg, color: '#fff' }}
-                  >
-                    {w.text}
-                  </div>
-                  <span>{w.name}</span>
-                </button>
-              ))}
-            </div>
-            <div className="security-badge" style={{ marginTop: '1.5rem' }}>
-              <span>&#128274;</span> Redirected securely to your payment provider
-            </div>
-            <button
-              type="button"
-              className="cafe-btn payment-submit-btn"
-              disabled={!selectedWallet || isProcessing}
-              onClick={handleWalletPay}
-            >
-              <span className="btn-text">
-                {selectedWallet
-                  ? `Pay ${grandTotal} MAD`
-                  : 'Select a wallet'}
-              </span>
-              <span className={`btn-spinner${isProcessing ? '' : ' hidden'}`} />
-            </button>
           </div>
 
           {/* Processing View */}

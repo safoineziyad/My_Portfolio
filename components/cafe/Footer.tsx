@@ -14,46 +14,22 @@ export default function Footer() {
 
   return (
     <footer className="cafe-footer">
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '3rem',
-          textAlign: 'left',
-          marginBottom: '3rem',
-        }}
-      >
+      <div className="max-w-[1200px] mx-auto grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-12 text-left mb-12">
         <div>
-          <h4
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '1.4rem',
-              color: 'var(--gold)',
-              marginBottom: '1rem',
-            }}
-          >
+          <h4 className="font-[Playfair_Display] text-[1.4rem] text-[var(--gold)] mb-4">
             Café NOMAD
           </h4>
-          <p style={{ fontSize: '0.9rem', lineHeight: 1.8, opacity: 0.7 }}>
+          <p className="text-[0.9rem] leading-[1.8] opacity-70">
             Born in the heart of the Marrakech Medina. A sanctuary for coffee
             lovers and travelers alike.
           </p>
         </div>
 
         <div>
-          <h4
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '1.1rem',
-              color: 'var(--cream)',
-              marginBottom: '1rem',
-            }}
-          >
+          <h4 className="font-[Playfair_Display] text-[1.1rem] text-[var(--cream)] mb-4">
             Opening Hours
           </h4>
-          <div style={{ fontSize: '0.9rem', opacity: 0.7, lineHeight: 2 }}>
+          <div className="text-[0.9rem] opacity-70 leading-8">
             <p>Mon - Fri: 7:00 AM - 10:00 PM</p>
             <p>Saturday: 8:00 AM - 11:00 PM</p>
             <p>Sunday: 8:00 AM - 9:00 PM</p>
@@ -61,35 +37,21 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '1.1rem',
-              color: 'var(--cream)',
-              marginBottom: '1rem',
-            }}
-          >
+          <h4 className="font-[Playfair_Display] text-[1.1rem] text-[var(--cream)] mb-4">
             Location
           </h4>
-          <div style={{ fontSize: '0.9rem', opacity: 0.7, lineHeight: 2 }}>
+          <div className="text-[0.9rem] opacity-70 leading-8">
             <p>Rue Sidi Bouamar, Medina</p>
             <p>Marrakech 40000, Morocco</p>
-            <p style={{ marginTop: 4 }}>+212 5 24 00 00 00</p>
+            <p className="mt-1">+212 5 24 00 00 00</p>
           </div>
         </div>
 
         <div>
-          <h4
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '1.1rem',
-              color: 'var(--cream)',
-              marginBottom: '1rem',
-            }}
-          >
+          <h4 className="font-[Playfair_Display] text-[1.1rem] text-[var(--cream)] mb-4">
             Follow Us
           </h4>
-          <div style={{ display: 'flex', gap: '0.8rem' }}>
+          <div className="flex gap-3">
             {SOCIAL_LINKS.map((link) => (
               <a
                 key={link.name}
@@ -97,29 +59,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={link.name}
-                style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: '50%',
-                  border: '1px solid var(--terracotta)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--terracotta)',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  fontFamily: "'Poppins', sans-serif",
-                  transition: 'all 0.3s ease',
-                  letterSpacing: 0,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'var(--terracotta)';
-                  e.currentTarget.style.color = 'var(--cream)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'var(--terracotta)';
-                }}
+                className="w-[42px] h-[42px] rounded-full border border-[var(--terracotta)] flex items-center justify-center text-[var(--terracotta)] text-[0.75rem] font-bold font-[Poppins] tracking-normal hover:bg-[var(--terracotta)] hover:text-[var(--cream)] transition-all duration-300"
               >
                 {link.icon}
               </a>
@@ -128,13 +68,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div
-        style={{
-          borderTop: '1px solid rgba(247,239,225,0.1)',
-          paddingTop: '2rem',
-          textAlign: 'center',
-        }}
-      >
+      <div className="border-t border-white/10 pt-8 text-center">
         <p>&copy; 2026 Cafe NOMAD. Made with &#10084;&#65039; by Ziyad.</p>
       </div>
     </footer>

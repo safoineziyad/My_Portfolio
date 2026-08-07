@@ -1,4 +1,7 @@
+require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -12,7 +15,7 @@ async function main() {
       data: {
         name: 'Admin',
         email: 'admin@ziyad.store',
-        passwordHash: btoa('admin123'),
+        passwordHash: bcrypt.hashSync('admin123', 12),
         role: 'admin',
         isActive: true,
       },
@@ -32,7 +35,7 @@ async function main() {
       data: {
         name: 'Manager',
         email: 'manager@ziyad.store',
-        passwordHash: btoa('manager123'),
+        passwordHash: bcrypt.hashSync('manager123', 12),
         role: 'manager',
         isActive: true,
       },
@@ -69,7 +72,7 @@ async function main() {
       data: {
         name: 'Demo Buyer',
         email: 'buyer@demo.com',
-        passwordHash: btoa('demo123'),
+        passwordHash: bcrypt.hashSync('demo123', 12),
         role: 'buyer',
       },
     });
@@ -86,7 +89,7 @@ async function main() {
       data: {
         name: 'Demo Seller',
         email: 'seller@demo.com',
-        passwordHash: btoa('demo123'),
+        passwordHash: bcrypt.hashSync('demo123', 12),
         role: 'seller',
       },
     });
