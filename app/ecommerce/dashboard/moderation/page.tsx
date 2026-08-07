@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatCurrency, formatDate } from '@/ecommerce/lib/utils';
 import { Shield, Eye, CheckCircle, XCircle, X, Package, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -113,7 +114,15 @@ function DetailModal({
               <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Images</p>
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {parsedImages.map((url, i) => (
-                  <img key={i} src={url} alt={`Product image ${i + 1}`} className="h-24 w-24 object-cover rounded-lg border border-slate-200 dark:border-slate-800 flex-shrink-0" />
+                  <Image
+                    key={i}
+                    src={url}
+                    alt={`Product image ${i + 1}`}
+                    width={96}
+                    height={96}
+                    unoptimized
+                    className="h-24 w-24 object-cover rounded-lg border border-slate-200 dark:border-slate-800 flex-shrink-0"
+                  />
                 ))}
               </div>
             </div>
@@ -149,7 +158,7 @@ export default function ModerationPage() {
   const [selectedProduct, setSelectedProduct] = useState<MarketplaceProduct | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -167,11 +176,11 @@ export default function ModerationPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, activeTab]);
 
   useEffect(() => {
     fetchProducts();
-  }, [page, activeTab]);
+  }, [fetchProducts]);
 
   const handleStatusUpdate = async (id: string, status: string) => {
     setUpdating(id);

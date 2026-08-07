@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatDate } from '@/ecommerce/lib/utils';
 import { AlertTriangle, Eye, X, ChevronLeft, ChevronRight, MessageSquare, Search } from 'lucide-react';
@@ -145,7 +145,7 @@ export default function DisputesPage() {
   const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(null);
   const [updating, setUpdating] = useState(false);
 
-  const fetchDisputes = async () => {
+  const fetchDisputes = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -163,11 +163,11 @@ export default function DisputesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, statusFilter]);
 
   useEffect(() => {
     fetchDisputes();
-  }, [page, statusFilter]);
+  }, [fetchDisputes]);
 
   const handleUpdate = async (id: string, status: string, resolution: string) => {
     setUpdating(true);

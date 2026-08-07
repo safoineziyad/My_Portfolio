@@ -8,7 +8,7 @@ import PaymentModal from '@/components/cafe/PaymentModal';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, initialized, init, getTotal, getTax, getGrandTotal } =
+  const { items, initialized, init, getTotal, getTax, getGrandTotal, clear } =
     useCartStore();
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
@@ -24,6 +24,31 @@ export default function CheckoutPage() {
   useEffect(() => {
     init();
   }, [init]);
+
+  useEffect(() => {
+    if (!initialized) return;
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    if (sessionId) {
+      fetch('/api/stripe/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.order?.orderNumber) {
+            clear();
+            setOrderNumber(data.order.orderNumber);
+            setOrderSuccess(true);
+          }
+        })
+        .catch(() => undefined);
+    }
+  }, [initialized, items, clear]);
 
   useEffect(() => {
     if (initialized && items.length === 0 && !orderSuccess) {

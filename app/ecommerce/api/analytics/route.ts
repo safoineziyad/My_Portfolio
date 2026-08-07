@@ -1,9 +1,13 @@
 export const dynamic = 'force-dynamic';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireAdmin } from '@/ecommerce/lib/api-auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAdmin(request);
+    if ('error' in auth) return auth.error;
+
     const [
       totalRevenue,
       totalOrders,
@@ -22,6 +26,28 @@ export async function GET() {
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+    const [currentOrders, previousOrders, currentCustomers, previousCustomers] = await Promise.all([
+      prisma.order.aggregate({
+        _sum: { total: true },
+        where: { createdAt: { gte: thirtyDaysAgo }, status: { not: 'cancelled' } },
+      }),
+      prisma.order.aggregate({
+        _sum: { total: true },
+        where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo }, status: { not: 'cancelled' } },
+      }),
+      prisma.customer.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.customer.count({ where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } }),
+    ]);
+
+    const currentRevenue = currentOrders._sum.total || 0;
+    const previousRevenue = previousOrders._sum.total || 0;
+    const currentOrderCount = await prisma.order.count({ where: { createdAt: { gte: thirtyDaysAgo } } });
+    const previousOrderCount = await prisma.order.count({ where: { createdAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } } });
+
+    const pctChange = (curr: number, prev: number) => (prev > 0 ? ((curr - prev) / prev) * 100 : curr > 0 ? 100 : 0);
 
     const orders = await prisma.order.findMany({
       where: { createdAt: { gte: thirtyDaysAgo } },
@@ -110,9 +136,9 @@ export async function GET() {
         totalProducts,
         totalStock: totalStock._sum.stock || 0,
         averageOrderValue: Math.round(averageOrderValue * 100) / 100,
-        revenueChange: 0,
-        ordersChange: 0,
-        customersChange: 0,
+        revenueChange: Math.round(pctChange(currentRevenue, previousRevenue) * 100) / 100,
+        ordersChange: Math.round(pctChange(currentOrderCount, previousOrderCount) * 100) / 100,
+        customersChange: Math.round(pctChange(currentCustomers, previousCustomers) * 100) / 100,
       },
       revenueByDay,
       recentOrders,

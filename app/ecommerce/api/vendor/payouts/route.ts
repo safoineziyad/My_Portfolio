@@ -1,15 +1,13 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireVendor } from '@/ecommerce/lib/api-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const vendorId = searchParams.get('vendorId');
-
-    if (!vendorId) {
-      return NextResponse.json({ error: 'vendorId required' }, { status: 400 });
-    }
+    const auth = await requireVendor(request);
+    if ('error' in auth) return auth.error;
+    const vendorId = auth.vendorId;
 
     const data = await prisma.payout.findMany({
       where: { vendorId },
@@ -25,11 +23,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireVendor(request);
+    if ('error' in auth) return auth.error;
+    const vendorId = auth.vendorId;
     const body = await request.json();
-    const { vendorId, amount, method } = body;
+    const { amount, method } = body;
 
-    if (!vendorId || !amount) {
-      return NextResponse.json({ error: 'vendorId and amount required' }, { status: 400 });
+    if (!amount) {
+      return NextResponse.json({ error: 'amount required' }, { status: 400 });
     }
 
     const parsedAmount = parseFloat(amount);

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatCurrency, formatDate, getInitials } from '@/ecommerce/lib/utils';
 import { Search, Users, ChevronLeft, ChevronRight, DollarSign, ShoppingCart } from 'lucide-react';
@@ -22,7 +22,7 @@ export default function CustomersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: page.toString(), pageSize: '12', search });
@@ -35,11 +35,11 @@ export default function CustomersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
     fetchCustomers();
-  }, [page]);
+  }, [fetchCustomers]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

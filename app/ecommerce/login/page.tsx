@@ -75,12 +75,6 @@ export default function LoginPage() {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-
-          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
-            <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-              Demo: admin@ziyad.store / admin123
-            </p>
-          </div>
         </div>
       </div>
     </div>

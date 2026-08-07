@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatDate } from '@/ecommerce/lib/utils';
 import { Store, Eye, CheckCircle, XCircle, X, Users, Star, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -53,9 +54,16 @@ function DetailModal({
           <X size={18} />
         </button>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0">
+          <div className="w-14 h-14 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
             {vendor.logo ? (
-              <img src={vendor.logo} alt={vendor.businessName} className="w-14 h-14 rounded-xl object-cover" />
+              <Image
+                src={vendor.logo}
+                alt={vendor.businessName}
+                width={56}
+                height={56}
+                className="w-14 h-14 rounded-xl object-cover"
+                unoptimized
+              />
             ) : (
               <Store size={24} className="text-indigo-600" />
             )}
@@ -147,7 +155,7 @@ export default function VendorsPage() {
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
 
-  const fetchVendors = async () => {
+const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -165,11 +173,11 @@ export default function VendorsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, statusFilter]);
 
   useEffect(() => {
     fetchVendors();
-  }, [page, statusFilter]);
+  }, [fetchVendors]);
 
   const handleVendorUpdate = async (id: string, update: { isApproved?: boolean; isActive?: boolean }) => {
     setUpdating(id);
@@ -250,9 +258,16 @@ export default function VendorsPage() {
                     <tr key={vendor.id} className="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0">
+                          <div className="w-9 h-9 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
                             {vendor.logo ? (
-                              <img src={vendor.logo} alt={vendor.businessName} className="w-9 h-9 rounded-lg object-cover" />
+                              <Image
+                                src={vendor.logo}
+                                alt={vendor.businessName}
+                                width={36}
+                                height={36}
+                                className="w-9 h-9 rounded-lg object-cover"
+                                unoptimized
+                              />
                             ) : (
                               <Store size={16} className="text-indigo-600" />
                             )}

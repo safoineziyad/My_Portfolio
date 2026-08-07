@@ -27,16 +27,22 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       try {
         const parsed = JSON.parse(stored);
         setUser(parsed);
-        fetchCartCount(parsed.id);
+        fetchCartCount();
       } catch {
         localStorage.removeItem('marketplace_user');
       }
     }
   }, [pathname]);
 
-  async function fetchCartCount(userId: string) {
+  async function fetchCartCount() {
     try {
-      const res = await fetch(`/ecommerce/api/marketplace/cart?userId=${userId}`);
+      const res = await fetch('/ecommerce/api/marketplace/cart');
+      if (res.status === 401) {
+        localStorage.removeItem('marketplace_user');
+        setUser(null);
+        setCartCount(0);
+        return;
+      }
       const items = await res.json();
       setCartCount(Array.isArray(items) ? items.length : 0);
     } catch {}
@@ -53,6 +59,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
     localStorage.removeItem('marketplace_user');
     setUser(null);
     setCartCount(0);
+    fetch('/ecommerce/api/marketplace/auth/logout', { method: 'POST' }).catch(() => {});
     router.push('/ecommerce/store');
   }
 

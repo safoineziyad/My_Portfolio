@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireAdmin } from '@/ecommerce/lib/api-auth';
 
 export async function GET() {
   try {
@@ -20,6 +21,8 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
+    const auth = await requireAdmin(request);
+    if ('error' in auth) return auth.error;
     const body = await request.json();
 
     const updates = Object.entries(body).map(([key, value]) =>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Save } from 'lucide-react';
@@ -148,9 +149,15 @@ export default function EditBlogPostPage() {
               folder="blog"
             />
             {form.coverImage && (
-              <div className="mt-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={form.coverImage} alt="Cover" className="w-full h-40 object-cover rounded-lg" />
+              <div className="mt-2 overflow-hidden rounded-lg">
+                <Image
+                  src={form.coverImage}
+                  alt="Cover"
+                  width={1200}
+                  height={320}
+                  className="w-full h-40 object-cover rounded-lg"
+                  unoptimized
+                />
               </div>
             )}
           </div>

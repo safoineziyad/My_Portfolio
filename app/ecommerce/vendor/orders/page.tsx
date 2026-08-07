@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatCurrency, formatDate, getStatusColor } from '@/ecommerce/lib/utils';
 import { Search, Eye, Package, X, Clock, CheckCircle, Truck, XCircle, RotateCw } from 'lucide-react';
@@ -183,7 +183,7 @@ export default function VendorOrdersPage() {
     setVendorId(id);
   }, []);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     if (!vendorId) return;
     setLoading(true);
     try {
@@ -197,11 +197,11 @@ export default function VendorOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [vendorId, search, statusFilter]);
 
   useEffect(() => {
     if (vendorId) fetchOrders();
-  }, [vendorId, statusFilter]);
+  }, [vendorId, fetchOrders]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

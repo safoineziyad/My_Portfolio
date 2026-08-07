@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ArrowLeft, CreditCard, Loader2, CheckCircle2 } from 'lucide-react';
@@ -37,18 +37,90 @@ export default function CheckoutPage() {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderNumbers, setOrderNumbers] = useState<string[]>([]);
 
+  const fetchCart = useCallback(async () => {
+    try {
+      const res = await fetch('/ecommerce/api/marketplace/cart');
+      if (res.status === 401) {
+        router.push('/ecommerce/store/auth');
+        return;
+      }
+      const data = await res.json();
+      setItems(Array.isArray(data) ? data : []);
+    } catch {
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
+
+  const confirmStripeSession = useCallback(async (sessionId: string, uid: string) => {
+    try {
+      const res = await fetch('/api/stripe/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success && Array.isArray(data.orders)) {
+        setOrderNumbers(data.orders.map((o: any) => o.orderNumber));
+        setOrderSuccess(true);
+      } else {
+        fetchCart();
+      }
+    } catch {
+      fetchCart();
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchCart]);
+
   useEffect(() => {
     const stored = localStorage.getItem('marketplace_user');
-    if (!stored) { router.push('/ecommerce/store/auth'); return; }
+    if (!stored) {
+      router.push('/ecommerce/store/auth');
+      return;
+    }
     const user = JSON.parse(stored);
     setUserId(user.id);
     setShipping((s) => ({ ...s, fullName: user.name || '' }));
-    fetchCart(user.id);
-  }, [router]);
 
-  async function fetchCart(uid: string) {
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    if (sessionId) {
+      confirmStripeSession(sessionId, user.id);
+    } else {
+      fetchCart();
+    }
+  }, [router, confirmStripeSession, fetchCart]);
+
+  async function handlePlaceOrder(e: React.FormEvent) {
     try {
-      const res = await fetch(`/ecommerce/api/marketplace/cart?userId=${uid}`);
+      const res = await fetch('/api/stripe/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success && Array.isArray(data.orders)) {
+        setOrderNumbers(data.orders.map((o: any) => o.orderNumber));
+        setOrderSuccess(true);
+      } else {
+        fetchCart();
+      }
+    } catch {
+      fetchCart();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchCart() {
+    try {
+      const res = await fetch('/ecommerce/api/marketplace/cart');
+      if (res.status === 401) {
+        router.push('/ecommerce/store/auth');
+        return;
+      }
       const data = await res.json();
       setItems(Array.isArray(data) ? data : []);
     } catch {} finally { setLoading(false); }
@@ -60,6 +132,28 @@ export default function CheckoutPage() {
     setPlacing(true);
     try {
       const addressStr = `${shipping.fullName}, ${shipping.address}, ${shipping.city}, ${shipping.state} ${shipping.zipCode}, ${shipping.country}`;
+
+      if (paymentMethod === 'card') {
+        const stripeRes = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId,
+            items: items.map((item) => ({
+              name: item.product.name,
+              price: item.product.price,
+              quantity: item.quantity,
+            })),
+            shippingAddress: addressStr,
+          }),
+        });
+        const stripeData = await stripeRes.json();
+        if (stripeData.url) {
+          window.location.href = stripeData.url;
+          return;
+        }
+      }
+
       const res = await fetch('/ecommerce/api/marketplace/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -173,7 +267,6 @@ export default function CheckoutPage() {
               <div className="space-y-3">
                 {[
                   { value: 'card', label: 'Credit / Debit Card', icon: CreditCard },
-                  { value: 'paypal', label: 'PayPal', icon: CreditCard },
                   { value: 'cod', label: 'Cash on Delivery', icon: CreditCard },
                 ].map((method) => (
                   <label key={method.value} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${paymentMethod === method.value ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/20' : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}`}>

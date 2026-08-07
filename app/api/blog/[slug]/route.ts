@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireAdmin } from '@/ecommerce/lib/api-auth';
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   try {
+    const auth = await requireAdmin(request);
+    if ('error' in auth) return auth.error;
     const post = await prisma.blogPost.findUnique({
       where: { slug: params.slug },
       include: { tags: true },
@@ -22,10 +25,12 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   try {
+    const auth = await requireAdmin(request);
+    if ('error' in auth) return auth.error;
     const body = await request.json();
     const { title, content, excerpt, coverImage, published, tags } = body;
 
@@ -74,10 +79,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   try {
+    const auth = await requireAdmin(request);
+    if ('error' in auth) return auth.error;
     const existing = await prisma.blogPost.findUnique({ where: { slug: params.slug } });
     if (!existing) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });

@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatCurrency, getStatusColor } from '@/ecommerce/lib/utils';
 import { Search, Plus, Edit2, Trash2, Package, X, Filter } from 'lucide-react';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Product {
   id: string;
@@ -49,6 +51,9 @@ function ProductForm({
     status: product?.status || 'pending',
     categoryId: product?.categoryId || '',
   });
+  const [imageUrl, setImageUrl] = useState(() => {
+    try { const imgs = JSON.parse(product?.images || '[]'); return imgs[0] || ''; } catch { return ''; }
+  });
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,8 +63,8 @@ function ProductForm({
       const url = product ? `/ecommerce/api/vendor/products/${product.id}` : '/ecommerce/api/vendor/products';
       const method = product ? 'PATCH' : 'POST';
       const body = product
-        ? form
-        : { ...form, vendorId };
+        ? { ...form, images: imageUrl ? JSON.stringify([imageUrl]) : '[]' }
+        : { ...form, vendorId, images: imageUrl ? JSON.stringify([imageUrl]) : '[]' };
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -174,6 +179,24 @@ function ProductForm({
               </select>
             </div>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Product Image</label>
+            {imageUrl ? (
+              <div className="relative overflow-hidden rounded-lg">
+                <Image
+                  src={imageUrl}
+                  alt="Product"
+                  width={800}
+                  height={320}
+                  className="w-full h-48 object-cover rounded-lg"
+                  unoptimized
+                />
+                <button type="button" onClick={() => setImageUrl('')} className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"><X size={14} /></button>
+              </div>
+            ) : (
+              <ImageUpload onUpload={setImageUrl} folder="products" />
+            )}
+          </div>
           <div className="flex items-center justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
               Cancel
@@ -234,7 +257,7 @@ export default function VendorProductsPage() {
     setVendorId(id);
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     if (!vendorId) return;
     setLoading(true);
     try {
@@ -248,11 +271,11 @@ export default function VendorProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [vendorId, statusFilter, search]);
 
   useEffect(() => {
     if (vendorId) fetchProducts();
-  }, [vendorId, statusFilter]);
+  }, [vendorId, fetchProducts]);
 
   useEffect(() => {
     fetch('/ecommerce/api/marketplace/categories').then(r => r.json()).then(data => setCategories(Array.isArray(data) ? data : data.data || [])).catch(console.error);
@@ -343,7 +366,14 @@ export default function VendorProductsPage() {
                 <div key={product.id} className="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-md transition-shadow">
                   <div className="h-40 bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
                     {images.length > 0 ? (
-                      <img src={images[0]} alt={product.name} className="w-full h-full object-cover" />
+                      <Image
+                        src={images[0]}
+                        alt={product.name}
+                        width={400}
+                        height={240}
+                        unoptimized
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <Package size={40} className="text-slate-300 dark:text-slate-700" />
                     )}

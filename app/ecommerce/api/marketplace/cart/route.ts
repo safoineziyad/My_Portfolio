@@ -1,15 +1,13 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireMarketplaceUser } from '@/ecommerce/lib/marketplace-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-
-    if (!userId) {
-      return NextResponse.json({ error: 'userId is required' }, { status: 400 });
-    }
+    const auth = requireMarketplaceUser(request);
+    if ('error' in auth) return auth.error;
+    const { userId } = auth;
 
     const cart = await prisma.marketplaceCart.findUnique({
       where: { userId },
@@ -41,10 +39,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, productId, quantity } = await request.json();
+    const auth = requireMarketplaceUser(request);
+    if ('error' in auth) return auth.error;
+    const { userId } = auth;
+    const { productId, quantity } = await request.json();
 
-    if (!userId || !productId) {
-      return NextResponse.json({ error: 'userId and productId are required' }, { status: 400 });
+    if (!productId) {
+      return NextResponse.json({ error: 'productId is required' }, { status: 400 });
     }
 
     let cart = await prisma.marketplaceCart.findUnique({ where: { userId } });
@@ -98,11 +99,23 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const auth = requireMarketplaceUser(request);
+    if ('error' in auth) return auth.error;
+    const { userId } = auth;
     const { searchParams } = new URL(request.url);
     const cartItemId = searchParams.get('cartItemId');
 
     if (!cartItemId) {
       return NextResponse.json({ error: 'cartItemId is required' }, { status: 400 });
+    }
+
+    const cart = await prisma.marketplaceCart.findUnique({ where: { userId } });
+    const item = cart
+      ? await prisma.marketplaceCartItem.findUnique({ where: { id: cartItemId } })
+      : null;
+
+    if (!item || item.cartId !== cart?.id) {
+      return NextResponse.json({ error: 'Cart item not found' }, { status: 404 });
     }
 
     await prisma.marketplaceCartItem.delete({ where: { id: cartItemId } });

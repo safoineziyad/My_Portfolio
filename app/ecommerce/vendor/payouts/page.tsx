@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatCurrency, formatDate, getStatusColor } from '@/ecommerce/lib/utils';
 import { DollarSign, Clock, CheckCircle, XCircle, Plus, X } from 'lucide-react';
@@ -103,7 +103,7 @@ export default function VendorPayoutsPage() {
     setVendorId(id);
   }, []);
 
-  const fetchPayouts = async () => {
+  const fetchPayouts = useCallback(async () => {
     if (!vendorId) return;
     setLoading(true);
     try {
@@ -121,11 +121,11 @@ export default function VendorPayoutsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [vendorId]);
 
   useEffect(() => {
     if (vendorId) fetchPayouts();
-  }, [vendorId]);
+  }, [vendorId, fetchPayouts]);
 
   const statCards = [
     { label: 'Total Earned', value: formatCurrency(summary.totalEarned), icon: DollarSign, color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' },

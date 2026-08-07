@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireAdmin } from '@/ecommerce/lib/api-auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,6 +47,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAdmin(request);
+    if ('error' in auth) return auth.error;
     const body = await request.json();
     const { name, description, sku, price, cost, stock, lowStockThreshold, status, featured, categoryId } = body;
 

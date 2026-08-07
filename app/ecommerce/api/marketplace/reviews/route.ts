@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireMarketplaceUser } from '@/ecommerce/lib/marketplace-auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     const reviews = await prisma.marketplaceReview.findMany({
-      where: { productId },
+      where: { productId, status: 'approved' },
       include: {
         user: { select: { id: true, name: true, avatar: true } },
       },
@@ -28,15 +29,25 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, productId, rating, comment } = await request.json();
+    const auth = requireMarketplaceUser(request);
+    if ('error' in auth) return auth.error;
+    const { userId } = auth;
+    const { productId, rating, comment } = await request.json();
 
-    if (!userId || !productId || !rating) {
-      return NextResponse.json({ error: 'userId, productId, and rating are required' }, { status: 400 });
+    if (!productId || !rating) {
+      return NextResponse.json({ error: 'productId and rating are required' }, { status: 400 });
     }
 
     const parsedRating = parseInt(rating);
     if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) {
       return NextResponse.json({ error: 'rating must be between 1 and 5' }, { status: 400 });
+    }
+
+    const purchased = await prisma.marketplaceOrder.findFirst({
+      where: { userId, status: { not: 'cancelled' }, items: { some: { productId } } },
+    });
+    if (!purchased) {
+      return NextResponse.json({ error: 'You can only review products you have purchased' }, { status: 403 });
     }
 
     const review = await prisma.marketplaceReview.create({

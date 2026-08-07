@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatCurrency, formatDate } from '@/ecommerce/lib/utils';
 import { Search, Eye, ChevronLeft, ChevronRight, Package, X, Truck, CheckCircle, Clock, XCircle, RotateCw } from 'lucide-react';
@@ -179,7 +179,7 @@ export default function OrdersPage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: page.toString(), pageSize: '15', search, status: statusFilter });
@@ -193,11 +193,11 @@ export default function OrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, statusFilter, search]);
 
   useEffect(() => {
     fetchOrders();
-  }, [page, statusFilter]);
+  }, [fetchOrders]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

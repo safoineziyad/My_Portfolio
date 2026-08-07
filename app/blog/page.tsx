@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { Calendar, Tag } from 'lucide-react';
+import prisma from '@/ecommerce/lib/db';
+
+export const dynamic = 'force-dynamic';
 
 interface BlogPost {
   id: string;
@@ -7,18 +10,18 @@ interface BlogPost {
   slug: string;
   excerpt: string | null;
   coverImage: string | null;
-  createdAt: string;
+  createdAt: Date;
   tags: { name: string }[];
 }
 
 async function getPosts(): Promise<BlogPost[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/blog?published=true`, {
-      cache: 'no-store',
+    return await prisma.blogPost.findMany({
+      where: { published: true },
+      include: { tags: true },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
     });
-    const data = await res.json();
-    return data.posts || [];
   } catch {
     return [];
   }

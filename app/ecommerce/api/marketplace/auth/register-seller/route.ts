@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
 import { hashPassword } from '@/ecommerce/lib/auth';
+import { setMarketplaceToken } from '@/ecommerce/lib/marketplace-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,10 +47,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
       vendor: { id: vendor.id, businessName: vendor.businessName, slug: vendor.slug },
     }, { status: 201 });
+
+    response.headers.set('Set-Cookie', setMarketplaceToken(user.id));
+
+    return response;
   } catch (error) {
     console.error('Seller registration error:', error);
     return NextResponse.json({ error: 'Registration failed' }, { status: 500 });

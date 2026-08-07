@@ -54,6 +54,7 @@ export default function RegisterSellerPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Registration failed');
       localStorage.setItem('marketplace_user', JSON.stringify(data.user));
+      if (data.vendor) localStorage.setItem('vendorId', data.vendor.id);
       router.push('/ecommerce/store');
     } catch (err: any) {
       setError(err.message);

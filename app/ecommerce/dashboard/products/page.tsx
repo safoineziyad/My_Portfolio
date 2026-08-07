@@ -1,8 +1,10 @@
 'use client';
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
 import { TopBar } from '@/ecommerce/components/Sidebar';
 import { formatCurrency } from '@/ecommerce/lib/utils';
 import { Search, Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Package, X, Filter } from 'lucide-react';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Product {
   id: string;
@@ -77,6 +79,7 @@ function ProductForm({
     featured: product?.featured || false,
     categoryId: product?.categoryId || '',
   });
+  const [imageUrl, setImageUrl] = useState(product?.images?.[0]?.url || '');
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,7 +91,7 @@ function ProductForm({
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, imageUrl }),
       });
       if (res.ok) {
         onSaved();
@@ -209,6 +212,18 @@ function ProductForm({
               ))}
             </select>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Product Image</label>
+            {imageUrl ? (
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imageUrl} alt="Product" className="w-full h-48 object-cover rounded-lg" />
+                <button type="button" onClick={() => setImageUrl('')} className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"><X size={14} /></button>
+              </div>
+            ) : (
+              <ImageUpload onUpload={setImageUrl} folder="products" />
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -252,9 +267,16 @@ function ProductCard({
 
   return (
     <div className="bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-md transition-shadow">
-      <div className="h-40 bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
+      <div className="h-40 bg-slate-100 dark:bg-slate-900 flex items-center justify-center overflow-hidden">
         {product.images && product.images.length > 0 ? (
-          <img src={product.images[0].url} alt={product.images[0].alt || product.name} className="w-full h-full object-cover" />
+          <Image
+            src={product.images[0].url}
+            alt={product.images[0].alt || product.name}
+            width={400}
+            height={240}
+            className="w-full h-full object-cover"
+            unoptimized
+          />
         ) : (
           <Package size={40} className="text-slate-300 dark:text-slate-700" />
         )}
@@ -297,7 +319,7 @@ export default function ProductsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: page.toString(), pageSize: '12', search, status: statusFilter });
@@ -310,14 +332,17 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, statusFilter, search]);
 
   useEffect(() => {
     fetchProducts();
-  }, [page, statusFilter]);
+  }, [fetchProducts]);
 
   useEffect(() => {
-    fetch('/ecommerce/api/categories').then(r => r.json()).then(d => setCategories(Array.isArray(d) ? d : [])).catch(console.error);
+    fetch('/ecommerce/api/categories')
+      .then((r) => r.json())
+      .then((d) => setCategories(Array.isArray(d) ? d : []))
+      .catch(console.error);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {

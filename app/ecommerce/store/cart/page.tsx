@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Loader2 } from 'lucide-react';
@@ -23,7 +23,23 @@ export default function CartPage() {
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
+
+  const fetchCart = useCallback(async () => {
+    try {
+      const res = await fetch('/ecommerce/api/marketplace/cart');
+      if (res.status === 401) {
+        localStorage.removeItem('marketplace_user');
+        router.push('/ecommerce/store/auth');
+        return;
+      }
+      const data = await res.json();
+      setItems(Array.isArray(data) ? data : []);
+    } catch {
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
 
   useEffect(() => {
     const stored = localStorage.getItem('marketplace_user');
@@ -31,20 +47,8 @@ export default function CartPage() {
       router.push('/ecommerce/store/auth');
       return;
     }
-    const user = JSON.parse(stored);
-    setUserId(user.id);
-    fetchCart(user.id);
-  }, [router]);
-
-  async function fetchCart(uid: string) {
-    try {
-      const res = await fetch(`/ecommerce/api/marketplace/cart?userId=${uid}`);
-      const data = await res.json();
-      setItems(Array.isArray(data) ? data : []);
-    } catch {} finally {
-      setLoading(false);
-    }
-  }
+    fetchCart();
+  }, [router, fetchCart]);
 
   async function updateQuantity(cartItemId: string, newQty: number) {
     if (newQty < 1) return;

@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
 import { verifyPassword } from '@/ecommerce/lib/auth';
+import { setMarketplaceToken } from '@/ecommerce/lib/marketplace-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: {
         id: user.id,
         name: user.name,
@@ -34,6 +35,10 @@ export async function POST(request: NextRequest) {
       },
       vendor: user.vendor || null,
     });
+
+    response.headers.set('Set-Cookie', setMarketplaceToken(user.id));
+
+    return response;
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ error: 'Login failed' }, { status: 500 });

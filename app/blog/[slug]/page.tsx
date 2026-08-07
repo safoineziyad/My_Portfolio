@@ -1,6 +1,10 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Calendar, Tag, ArrowLeft } from 'lucide-react';
+import prisma from '@/ecommerce/lib/db';
+
+export const dynamic = 'force-dynamic';
 
 interface BlogPost {
   id: string;
@@ -9,20 +13,17 @@ interface BlogPost {
   content: string;
   excerpt: string | null;
   coverImage: string | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   tags: { name: string }[];
 }
 
 async function getPost(slug: string): Promise<BlogPost | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/blog/${slug}`, {
-      cache: 'no-store',
+    return await prisma.blogPost.findUnique({
+      where: { slug },
+      include: { tags: true },
     });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.post || null;
   } catch {
     return null;
   }
@@ -81,8 +82,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
         {post.coverImage && (
           <div className="mb-8 rounded-2xl overflow-hidden border border-border">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={post.coverImage} alt={post.title} className="w-full h-auto" />
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              width={1200}
+              height={600}
+              className="w-full h-auto"
+              unoptimized
+            />
           </div>
         )}
 

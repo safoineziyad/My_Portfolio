@@ -27,6 +27,7 @@ export default function AuthPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Login failed');
       localStorage.setItem('marketplace_user', JSON.stringify(data.user));
+      if (data.vendor) localStorage.setItem('vendorId', data.vendor.id);
       router.push('/ecommerce/store');
     } catch (err: any) {
       setError(err.message);

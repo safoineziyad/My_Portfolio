@@ -1,15 +1,13 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/ecommerce/lib/db';
+import { requireVendor } from '@/ecommerce/lib/api-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const vendorId = searchParams.get('vendorId');
-
-    if (!vendorId) {
-      return NextResponse.json({ error: 'vendorId required' }, { status: 400 });
-    }
+    const auth = await requireVendor(request);
+    if ('error' in auth) return auth.error;
+    const vendorId = auth.vendorId;
 
     const [totalProducts, pendingOrders, revenueResult, vendor] = await Promise.all([
       prisma.marketplaceProduct.count({ where: { vendorId } }),
